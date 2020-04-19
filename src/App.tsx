@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useRef } from 'react';
+
 import './App.css';
 
+interface IRecipeForm {
+  recipeName: { value: string }
+}
+
 function App() {
+  const recipeForm = useRef(null);
+  const [recipes, setRecipes] = useState(Array<string>());
+
+  const addRecipe = () => {
+    const form = recipeForm.current! as IRecipeForm;
+    let recipeName = form.recipeName.value;
+    setRecipes(prevState => [...prevState, recipeName]);
+    form.recipeName.value = '';
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form ref={recipeForm}>
+        <label>Nombre: </label>
+        <input name="recipeName"></input>
+        <button type="button" onClick={addRecipe}>Agregar</button>
+      </form>
+      <ul>
+        {recipes.map((recipe, i) => (<li key={i}>{recipe}</li>))}
+      </ul>
     </div>
   );
 }
