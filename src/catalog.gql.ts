@@ -15,3 +15,13 @@ export const ADD_RECIPE = gql`
     }
   }
 `;
+
+export const UPLOAD_FILE = gql`
+  mutation SingleUpload($file: Upload!) {
+    singleUpload(file: { file: $file }) {
+      filename
+      mimetype
+      encoding
+    }
+  }
+`;
