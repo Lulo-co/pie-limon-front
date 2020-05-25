@@ -16,52 +16,41 @@ import {
 } from '@material-ui/core';
 
 import { GET_RECIPES, ADD_RECIPE } from './catalog.gql';
+import RecipeRow from './RecipeRow';
+import { IRecipe } from './types';
 
 interface IRecipeForm {
   recipeName: { value: string };
 }
 
-interface IRecipe {
-  id: number;
-  name: string;
-}
-
 function Catalog() {
   const recipeForm = useRef(null);
   const [recipes, setRecipes] = useState(Array<IRecipe>());
-  const { loading: loadingRecipes, error: recipesError } = useQuery(
+  const [someError, setSomeError] = useState(null as (Error | null));
+  const { loading: loadingRecipes } = useQuery(
     GET_RECIPES,
     {
       onCompleted: (data) => {
         setRecipes(data.getRecipes);
       },
+      onError: (error) => {
+        setSomeError(error)
+      },
     }
   );
-  const [addRecipe, { loading: sending, error: addError }] = useMutation(
+  const [addRecipe, { loading: sending }] = useMutation(
     ADD_RECIPE,
     {
       onCompleted: ({ addRecipe }) => {
         setRecipes((prevState) => [...prevState, addRecipe]);
       },
+      onError: (error) => {
+        setSomeError(error)
+      },
     }
   );
-  // const [uploadFile, { loading: sendingFile }] = useMutation(
-  //   UPLOAD_FILE,
-  //   {
-  //     onCompleted: () => {}
-  //   }
-  // );
-
-  const errorMessages = [
-    recipesError as Error,
-    addError as Error,
-    // uploadError as Error,
-  ]
-    .filter(Boolean)
-    .map((err) => <p key={err.name}>{err.message}</p>);
 
   const onRecipeSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log(64);
     event.preventDefault();
     const form = recipeForm.current! as IRecipeForm;
     const name = form.recipeName.value;
@@ -71,23 +60,6 @@ function Catalog() {
 
   return (
     <Grid container direction="column" justify="space-around" spacing={3}>
-      {/* <form
-        onSubmit={() => {
-          console.log("Submitted");
-        }}
-        encType={"multipart/form-data"}
-      >
-        <input
-          name={"document"}
-          type={"file"}
-          onChange={({ target: { files } }) => {
-            const file = files![0];
-            console.log(file);
-            file && uploadFile({ variables: { file: file } });
-          }}
-        />
-        {sendingFile && <p>Loading.....</p>}
-      </form> */}
       <Grid item>
         <form ref={recipeForm} onSubmit={onRecipeSubmit}>
           <Paper style={{ paddingTop: 12 }}>
@@ -100,7 +72,7 @@ function Catalog() {
                   variant="outlined"
                   color="primary"
                   endIcon={<AddTwoToneIcon />}
-                  disabled={sending || !!addError}
+                  disabled={sending || !!someError}
                   type="submit"
                 >
                   {sending ? '...' : 'Agregar'}
@@ -117,10 +89,10 @@ function Catalog() {
             Cargando Recetas ...
           </Alert>
         )}
-        {errorMessages.length > 0 && (
+        {someError && (
           <Alert severity="error" style={{ margin: 'auto', width: '50%' }}>
             <AlertTitle>Error</AlertTitle>
-            {errorMessages}
+            <p>{someError.message}</p>
           </Alert>
         )}
       </Grid>
@@ -135,13 +107,8 @@ function Catalog() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {recipes.map(({ id, name }) => (
-                <TableRow key={id}>
-                  <TableCell component="th" scope="row">
-                    {name}
-                  </TableCell>
-                  <TableCell align="right">+ (._. )</TableCell>
-                </TableRow>
+              {recipes.map((recipe) => (
+                <RecipeRow recipe={recipe} key={recipe.id} />
               ))}
             </TableBody>
           </Table>
