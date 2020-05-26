@@ -36,30 +36,27 @@ let alertMessage = '';
 
 const RecipeRow = ({ recipe }: RecipeRowProps) => {
   const [fileUploaded, setFileUploaded] = useState(false);
-  const [someError, setSomeError] = useState(null as (Error | null));
-  const [uploadFile, { loading: uploading }] = useMutation(
-    UPLOAD_PHOTO,
-    {
-      onCompleted: ({ attachRecipePhoto }) => {
-        if (!attachRecipePhoto) setSomeError(new Error());
-        setFileUploaded(attachRecipePhoto);
-        setTimeout(() => {
-          setFileUploaded(false);
-        }, 4000);
-      },
-      onError: (error) => {
-        setSomeError(error)
-        setTimeout(() => {
-          setSomeError(null);
-        }, 4000);
-      },
-    }
-  );
+  const [someError, setSomeError] = useState(null as Error | null);
+  const [uploadFile, { loading: uploading }] = useMutation(UPLOAD_PHOTO, {
+    onCompleted: ({ attachRecipePhoto }) => {
+      if (!attachRecipePhoto) setSomeError(new Error());
+      setFileUploaded(attachRecipePhoto);
+      setTimeout(() => {
+        setFileUploaded(false);
+      }, 4000);
+    },
+    onError: (error) => {
+      setSomeError(error);
+      setTimeout(() => {
+        setSomeError(null);
+      }, 4000);
+    },
+  });
 
   const alertRef = React.useRef(null);
   let alertDisplay = false;
 
-  if(fileUploaded) {
+  if (fileUploaded) {
     alertDisplay = true;
     alertType = 'success';
     alertMessage = 'Foto subida correctamente :)';
@@ -77,7 +74,7 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
         {name}
       </TableCell>
       <TableCell
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'end' }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
       >
         <Transition
           nodeRef={alertRef}
@@ -89,7 +86,6 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
               <Alert
                 severity={alertType as Color}
                 style={{
-                  width: '26%',
                   padding: '0 11px',
                   ...defaultStyle,
                   ...transitionStyles[state],

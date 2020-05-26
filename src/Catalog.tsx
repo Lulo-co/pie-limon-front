@@ -26,29 +26,23 @@ interface IRecipeForm {
 function Catalog() {
   const recipeForm = useRef(null);
   const [recipes, setRecipes] = useState(Array<IRecipe>());
-  const [someError, setSomeError] = useState(null as (Error | null));
-  const { loading: loadingRecipes } = useQuery(
-    GET_RECIPES,
-    {
-      onCompleted: (data) => {
-        setRecipes(data.getRecipes);
-      },
-      onError: (error) => {
-        setSomeError(error)
-      },
-    }
-  );
-  const [addRecipe, { loading: sending }] = useMutation(
-    ADD_RECIPE,
-    {
-      onCompleted: ({ addRecipe }) => {
-        setRecipes((prevState) => [...prevState, addRecipe]);
-      },
-      onError: (error) => {
-        setSomeError(error)
-      },
-    }
-  );
+  const [someError, setSomeError] = useState(null as Error | null);
+  const { loading: loadingRecipes } = useQuery(GET_RECIPES, {
+    onCompleted: (data) => {
+      setRecipes(data.getRecipes);
+    },
+    onError: (error) => {
+      setSomeError(error);
+    },
+  });
+  const [addRecipe, { loading: sending }] = useMutation(ADD_RECIPE, {
+    onCompleted: ({ addRecipe }) => {
+      setRecipes((prevState) => [...prevState, addRecipe]);
+    },
+    onError: (error) => {
+      setSomeError(error);
+    },
+  });
 
   const onRecipeSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
