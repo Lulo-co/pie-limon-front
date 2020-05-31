@@ -1,13 +1,18 @@
 import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from '@apollo/react-hooks';
+import { AppBar, Toolbar, Typography, Container } from '@material-ui/core';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { createUploadLink } from 'apollo-upload-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import KitchenTwoToneIcon from '@material-ui/icons/KitchenTwoTone';
 import React from 'react';
 
+import { PAGES } from './AppConstants';
 import Catalog from './Catalog';
-import { AppBar, Toolbar, Typography, Container } from '@material-ui/core';
+import RecipeDetail from './RecipeDetail';
+
+import './App.css';
 
 function App() {
   const uploadLink = createUploadLink({
@@ -25,19 +30,30 @@ function App() {
   return (
     <div className="App">
       <CssBaseline />
-      <AppBar position="relative">
-        <Toolbar>
-          <KitchenTwoToneIcon />
-          <Typography variant="h6" color="inherit" noWrap>
-            Recetas
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <ApolloProvider client={client}>
-        <Container>
-          <Catalog />
-        </Container>
-      </ApolloProvider>
+      <Router>
+        <AppBar position="relative">
+          <Toolbar>
+            <Link to={PAGES.ROOT} style={{ display: 'inline-flex' }}>
+              <KitchenTwoToneIcon />
+              <Typography variant="h6" color="inherit" noWrap>
+                Recetas
+              </Typography>
+            </Link>
+          </Toolbar>
+        </AppBar>
+        <ApolloProvider client={client}>
+          <Container>
+            <Switch>
+              <Route path={`${PAGES.RECIPE_DETAIL}:id`}>
+                <RecipeDetail />
+              </Route>
+              <Route path={PAGES.ROOT}>
+                <Catalog />
+              </Route>
+            </Switch>
+          </Container>
+        </ApolloProvider>
+      </Router>
     </div>
   );
 }

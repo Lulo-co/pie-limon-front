@@ -1,0 +1,5 @@
+/* No decorate links */
+a {
+  text-decoration: none;
+  color: inherit;
+}

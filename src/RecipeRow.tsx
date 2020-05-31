@@ -1,4 +1,5 @@
 import { Alert, Color } from '@material-ui/lab';
+import { Link } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useMutation } from '@apollo/react-hooks';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
@@ -11,11 +12,17 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { UPLOAD_PHOTO } from './catalog.gql';
+import { UPLOAD_PHOTO, UploadPhotoVars } from './catalog.gql';
 import { IRecipe } from './types';
+
+import { PAGES } from './AppConstants';
 
 interface RecipeRowProps {
   recipe: IRecipe;
+}
+
+interface uploadPhotoData {
+  attachRecipePhoto: boolean;
 }
 
 const alertDuration = 4000;
@@ -47,7 +54,10 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
     }, alertDuration);
   };
 
-  const [uploadFile, { loading: uploading }] = useMutation(UPLOAD_PHOTO, {
+  const [uploadFile, { loading: uploading }] = useMutation<
+    uploadPhotoData,
+    UploadPhotoVars
+  >(UPLOAD_PHOTO, {
     onCompleted: ({ attachRecipePhoto }) => {
       if (attachRecipePhoto) {
         setFileUploaded(attachRecipePhoto);
@@ -79,7 +89,9 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
 
   return (
     <TableRow>
-      <TableCell>{name}</TableCell>
+      <TableCell>
+        <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>{name}</Link>
+      </TableCell>
       <TableCell align="right">
         <Transition
           nodeRef={alertRef}
@@ -129,9 +141,11 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
             )}
           </IconButton>
         </label>
-        <IconButton title="Ver receta" size="small">
-          <VisibilityIcon />
-        </IconButton>
+        <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>
+          <IconButton title="Ver receta" size="small">
+            <VisibilityIcon />
+          </IconButton>
+        </Link>
       </TableCell>
     </TableRow>
   );
