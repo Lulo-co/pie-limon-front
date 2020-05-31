@@ -12,13 +12,17 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { UPLOAD_PHOTO } from './catalog.gql';
+import { UPLOAD_PHOTO, UploadPhotoVars } from './catalog.gql';
 import { IRecipe } from './types';
 
 import { PAGES } from './AppConstants';
 
 interface RecipeRowProps {
   recipe: IRecipe;
+}
+
+interface uploadPhotoData {
+  attachRecipePhoto: boolean;
 }
 
 const alertDuration = 4000;
@@ -50,7 +54,10 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
     }, alertDuration);
   };
 
-  const [uploadFile, { loading: uploading }] = useMutation(UPLOAD_PHOTO, {
+  const [uploadFile, { loading: uploading }] = useMutation<
+    uploadPhotoData,
+    UploadPhotoVars
+  >(UPLOAD_PHOTO, {
     onCompleted: ({ attachRecipePhoto }) => {
       if (attachRecipePhoto) {
         setFileUploaded(attachRecipePhoto);

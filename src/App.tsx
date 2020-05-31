@@ -25,7 +25,6 @@ function App() {
   const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: uploadLink,
-    // defaultOptions: { query: { fetchPolicy: 'no-cache', errorPolicy: 'all' } }
   });
 
   return (

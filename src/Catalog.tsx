@@ -17,7 +17,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 
-import { GET_RECIPES, ADD_RECIPE } from './catalog.gql';
+import { GET_RECIPES, ADD_RECIPE, AddRecipeVars } from './catalog.gql';
 import RecipeRow from './RecipeRow';
 import { IRecipe } from './types';
 
@@ -27,6 +27,10 @@ interface IRecipeForm {
 
 interface GetRecipesData {
   getRecipes: IRecipe[];
+}
+
+interface AddRecipeData {
+  addRecipe: IRecipe;
 }
 
 function Catalog() {
@@ -45,7 +49,10 @@ function Catalog() {
     getRecipesQuery();
   }, [getRecipesQuery]);
 
-  const [addRecipe, { loading: sending }] = useMutation(ADD_RECIPE, {
+  const [addRecipe, { loading: sending }] = useMutation<
+    AddRecipeData,
+    AddRecipeVars
+  >(ADD_RECIPE, {
     onCompleted: () => recipesRefetch(),
     onError: (error) => {
       setSomeError(error);

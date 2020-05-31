@@ -28,6 +28,10 @@ export const GET_RECIPE = gql`
   }
 `;
 
+export interface AddRecipeVars {
+  name: string;
+}
+
 export const ADD_RECIPE = gql`
   mutation addRecipe($name: String!) {
     addRecipe(newRecipe: { name: $name }) {
@@ -35,6 +39,11 @@ export const ADD_RECIPE = gql`
     }
   }
 `;
+
+export interface UploadPhotoVars {
+  file: File;
+  recipeId: number;
+}
 
 export const UPLOAD_PHOTO = gql`
   mutation attachRecipePhoto($file: Upload!, $recipeId: ID!) {
