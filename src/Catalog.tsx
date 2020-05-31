@@ -4,6 +4,7 @@ import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import React, { useState, useRef } from 'react';
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import {
   Paper,
   Table,
@@ -13,6 +14,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  IconButton,
 } from '@material-ui/core';
 
 import { GET_RECIPES, ADD_RECIPE } from './catalog.gql';
@@ -27,18 +29,21 @@ function Catalog() {
   const recipeForm = useRef(null);
   const [recipes, setRecipes] = useState(Array<IRecipe>());
   const [someError, setSomeError] = useState(null as Error | null);
-  const { loading: loadingRecipes } = useQuery(GET_RECIPES, {
-    onCompleted: (data) => {
-      setRecipes(data.getRecipes);
-    },
-    onError: (error) => {
-      setSomeError(error);
-    },
-  });
+  const { loading: loadingRecipes, refetch: recipesRefetch } = useQuery(
+    GET_RECIPES,
+    {
+      notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        setRecipes(data.getRecipes);
+      },
+      onError: (error) => {
+        setSomeError(error);
+      },
+    }
+  );
+
   const [addRecipe, { loading: sending }] = useMutation(ADD_RECIPE, {
-    onCompleted: ({ addRecipe }) => {
-      setRecipes((prevState) => [...prevState, addRecipe]);
-    },
+    onCompleted: () => recipesRefetch(),
     onError: (error) => {
       setSomeError(error);
     },
@@ -96,8 +101,24 @@ function Catalog() {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell colSpan={2} style={{ width: '85%' }}>
+                  Nombre
+                </TableCell>
+                <TableCell align="right" style={{ width: '5%' }}>
+                  <IconButton
+                    title="Fotos por receta"
+                    size="small"
+                    style={{
+                      backgroundColor: 'transparent',
+                      cursor: 'default',
+                    }}
+                  >
+                    <PhotoLibraryIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell align="right" style={{ width: '10%' }}>
+                  Acciones
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

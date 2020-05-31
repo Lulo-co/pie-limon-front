@@ -5,6 +5,9 @@ export const GET_RECIPES = gql`
     getRecipes {
       id
       name
+      photos {
+        id
+      }
     }
   }
 `;
@@ -13,7 +16,6 @@ export const ADD_RECIPE = gql`
   mutation addRecipe($name: String!) {
     addRecipe(newRecipe: { name: $name }) {
       id
-      name
     }
   }
 `;
