@@ -18,6 +18,7 @@ interface RecipeRowProps {
   recipe: IRecipe;
 }
 
+const alertDuration = 4000;
 const transitionDuration = 2000;
 const defaultStyle = {
   transition: `opacity ${transitionDuration}ms ease-in-out`,
@@ -32,25 +33,33 @@ const transitionStyles = {
 };
 
 let alertType: undefined | string = undefined;
-let alertMessage = '';
+let alertMessage = 'Foto subida correctamente :)';
 
 const RecipeRow = ({ recipe }: RecipeRowProps) => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [someError, setSomeError] = useState(null as Error | null);
+  const [numPhotos, setNumPhotos] = useState(recipe.photos.length);
+
+  const reportError = (error: Error) => {
+    setSomeError(error);
+    setTimeout(() => {
+      setSomeError(null);
+    }, alertDuration);
+  };
+
   const [uploadFile, { loading: uploading }] = useMutation(UPLOAD_PHOTO, {
     onCompleted: ({ attachRecipePhoto }) => {
-      if (!attachRecipePhoto) setSomeError(new Error());
-      setFileUploaded(attachRecipePhoto);
-      setTimeout(() => {
-        setFileUploaded(false);
-      }, 4000);
+      if (attachRecipePhoto) {
+        setFileUploaded(attachRecipePhoto);
+        setNumPhotos(numPhotos + 1);
+        setTimeout(() => {
+          setFileUploaded(false);
+        }, alertDuration);
+      } else {
+        reportError(new Error());
+      }
     },
-    onError: (error) => {
-      setSomeError(error);
-      setTimeout(() => {
-        setSomeError(null);
-      }, 4000);
-    },
+    onError: reportError,
   });
 
   const alertRef = React.useRef(null);
@@ -70,12 +79,8 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
 
   return (
     <TableRow>
-      <TableCell component="th" scope="row">
-        {name}
-      </TableCell>
-      <TableCell
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
-      >
+      <TableCell>{name}</TableCell>
+      <TableCell align="right">
         <Transition
           nodeRef={alertRef}
           in={alertDisplay}
@@ -96,6 +101,9 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
             );
           }}
         </Transition>
+      </TableCell>
+      <TableCell align="right">{numPhotos}</TableCell>
+      <TableCell align="right">
         <input
           accept="image/*"
           type="file"
