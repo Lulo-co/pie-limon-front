@@ -1,10 +1,10 @@
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useLazyQuery, useMutation } from '@apollo/react-hooks';
 import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import React, { useState, useRef } from 'react';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Paper,
   Table,
@@ -25,22 +25,25 @@ interface IRecipeForm {
   recipeName: { value: string };
 }
 
+interface GetRecipesData {
+  getRecipes: IRecipe[];
+}
+
 function Catalog() {
   const recipeForm = useRef(null);
-  const [recipes, setRecipes] = useState(Array<IRecipe>());
   const [someError, setSomeError] = useState(null as Error | null);
-  const { loading: loadingRecipes, refetch: recipesRefetch } = useQuery(
-    GET_RECIPES,
-    {
-      notifyOnNetworkStatusChange: true,
-      onCompleted: (data) => {
-        setRecipes(data.getRecipes);
-      },
-      onError: (error) => {
-        setSomeError(error);
-      },
-    }
-  );
+  const [
+    getRecipesQuery,
+    { loading: loadingRecipes, refetch: recipesRefetch, data },
+  ] = useLazyQuery<GetRecipesData>(GET_RECIPES, {
+    onError: (error) => {
+      setSomeError(error);
+    },
+  });
+
+  useEffect(() => {
+    getRecipesQuery();
+  }, [getRecipesQuery]);
 
   const [addRecipe, { loading: sending }] = useMutation(ADD_RECIPE, {
     onCompleted: () => recipesRefetch(),
@@ -122,9 +125,10 @@ function Catalog() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {recipes.map((recipe) => (
-                <RecipeRow recipe={recipe} key={recipe.id} />
-              ))}
+              {data &&
+                data.getRecipes.map((recipe) => (
+                  <RecipeRow recipe={recipe} key={recipe.id} />
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

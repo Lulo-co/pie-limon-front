@@ -1,29 +1,30 @@
-import React, { useState } from 'react';
+import { Alert, AlertTitle } from '@material-ui/lab';
+import { Grid, Paper, ButtonGroup, Button } from '@material-ui/core';
+import { useLazyQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import React, { useState, useEffect } from 'react';
 
 import { GET_RECIPE, GetRecipeVars } from './catalog.gql';
-import { Grid, Paper, ButtonGroup, Button } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { IRecipe } from './types';
+import RecipePhoto from './RecipePhoto';
 
 interface GetRecipeData {
-  getRecipe: {
-    id: number;
-    name: string;
-    photos: Array<{ url: string }>;
-  };
+  getRecipe: IRecipe;
 }
 
 const RecipeDetail: React.FC = () => {
   const { id } = useParams();
   const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
-  const { loading, data, error } = useQuery<GetRecipeData, GetRecipeVars>(
-    GET_RECIPE,
-    {
-      variables: { recipeId: id },
-      errorPolicy: 'all',
-    }
-  );
+  const [queryGetRecipe, { loading, data, error }] = useLazyQuery<
+    GetRecipeData,
+    GetRecipeVars
+  >(GET_RECIPE, {
+    variables: { recipeId: id },
+    errorPolicy: 'all',
+  });
+  useEffect(() => {
+    queryGetRecipe();
+  }, [queryGetRecipe]);
 
   if (error) {
     return (
@@ -36,7 +37,7 @@ const RecipeDetail: React.FC = () => {
     );
   }
 
-  if (loading) {
+  if (loading || !data) {
     return (
       <Grid item>
         <Alert severity="info" style={{ margin: 'auto', width: '33%' }}>
@@ -45,7 +46,7 @@ const RecipeDetail: React.FC = () => {
       </Grid>
     );
   }
-  console.log('RENDER!');
+
   return (
     <Grid container direction="column" justify="space-around" spacing={3}>
       <Grid item style={{ textAlign: 'center' }}>
@@ -69,12 +70,17 @@ const RecipeDetail: React.FC = () => {
           </ButtonGroup>
         </Paper>
       </Grid>
+
       <Grid item style={{ textAlign: 'center', maxWidth: '100%' }}>
-        <img
-          style={{ maxWidth: '100%' }}
-          src={data!.getRecipe.photos[currentPhotoIndex].url}
-          alt="Foto de receta"
-        />
+        {data!.getRecipe.photos.map(({ url }, index) => {
+          return (
+            <RecipePhoto
+              key={index}
+              url={url}
+              visible={index === currentPhotoIndex}
+            />
+          );
+        })}
       </Grid>
     </Grid>
   );
