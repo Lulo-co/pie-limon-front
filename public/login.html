@@ -1,0 +1,38 @@
+<!doctype html>
+
+<head>
+  <meta name="google-signin-client_id"
+    content="862260905972-nnq5frisivom0f9qu4cf941jffett01m.apps.googleusercontent.com">
+</head>
+
+<body>
+  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  <script>
+    function onSignIn(googleUser) {
+      // Useful data for your client-side scripts:
+      var profile = googleUser.getBasicProfile();
+      console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+      console.log('Full Name: ' + profile.getName());
+      console.log('Given Name: ' + profile.getGivenName());
+      console.log('Family Name: ' + profile.getFamilyName());
+      console.log("Image URL: " + profile.getImageUrl());
+      console.log("Email: " + profile.getEmail());
+
+      // The ID token you need to pass to your backend:
+      var id_token = googleUser.getAuthResponse().id_token;
+      console.log("ID Token: " + id_token);
+
+      console.log("Sending token...");
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://192.168.1.194:4000?token=' + id_token);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+        console.log('Signed in as: ' + xhr.responseText);
+      };
+      xhr.send();
+    }
+  </script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+</body>
