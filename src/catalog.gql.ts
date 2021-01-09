@@ -13,7 +13,7 @@ export const GET_RECIPES = gql`
 `;
 
 export interface GetRecipeVars {
-  recipeId: number;
+  recipeId: string;
 }
 
 export const GET_RECIPE = gql`

@@ -12,8 +12,10 @@ interface GetRecipeData {
   getRecipe: IRecipe;
 }
 
+interface RouteParams { id: string }
+
 const RecipeDetail: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<RouteParams>();
   const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
   const [queryGetRecipe, { loading, data, error }] = useLazyQuery<
     GetRecipeData,

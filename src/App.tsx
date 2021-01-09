@@ -5,8 +5,9 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { createUploadLink } from 'apollo-upload-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 import KitchenTwoToneIcon from '@material-ui/icons/KitchenTwoTone';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { PAGES } from './AppConstants';
 import Catalog from './Catalog';
@@ -15,13 +16,15 @@ import RecipeDetail from './RecipeDetail';
 import './App.css';
 
 function App() {
+  const [token, setToken] = useState('');
+
   const uploadLink = createUploadLink({
     uri: process.env.REACT_APP_GRAPHQL_URI,
     headers: {
       'keep-alive': 'true',
+      'Authorization': token,
     },
   });
-
   const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: uploadLink,
@@ -43,14 +46,25 @@ function App() {
         </AppBar>
         <ApolloProvider client={client}>
           <Container>
-            <Switch>
-              <Route path={`${PAGES.RECIPE_DETAIL}:id`}>
-                <RecipeDetail />
-              </Route>
-              <Route path={PAGES.ROOT}>
-                <Catalog />
-              </Route>
-            </Switch>
+            {token ? (
+              <Switch>
+                <Route path={`${PAGES.RECIPE_DETAIL}:id`}>
+                  <RecipeDetail />
+                </Route>
+                <Route path={PAGES.ROOT}>
+                  <Catalog />
+                </Route>
+              </Switch>
+            ) : (
+                <GoogleLogin
+                  clientId={process.env.REACT_APP_GCLIENT_ID || ''}
+                  buttonText="Login"
+                  onSuccess={(response) => { setToken((response as GoogleLoginResponse).tokenId) }}
+                  onFailure={(p) => { console.error('failure', p) }}
+                  cookiePolicy={'single_host_origin'}
+                  isSignedIn
+                />
+              )}
           </Container>
         </ApolloProvider>
       </Router>
