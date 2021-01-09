@@ -1,9 +1,7 @@
-import { ApolloClient } from 'apollo-client';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { AppBar, Toolbar, Typography, Container } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { createUploadLink } from 'apollo-upload-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 import KitchenTwoToneIcon from '@material-ui/icons/KitchenTwoTone';

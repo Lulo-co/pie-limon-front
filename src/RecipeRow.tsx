@@ -1,7 +1,7 @@
 import { Alert, Color } from '@material-ui/lab';
 import { Link } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/client';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import React, { useState } from 'react';
 import VisibilityIcon from '@material-ui/icons/Visibility';

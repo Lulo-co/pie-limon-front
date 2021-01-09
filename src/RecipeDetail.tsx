@@ -1,6 +1,6 @@
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { Grid, Paper, ButtonGroup, Button } from '@material-ui/core';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
@@ -12,7 +12,9 @@ interface GetRecipeData {
   getRecipe: IRecipe;
 }
 
-interface RouteParams { id: string }
+interface RouteParams {
+  id: string;
+}
 
 const RecipeDetail: React.FC = () => {
   const { id } = useParams<RouteParams>();
