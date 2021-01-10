@@ -1,5 +1,5 @@
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { useLazyQuery, useMutation } from '@apollo/react-hooks';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -53,7 +53,7 @@ function Catalog() {
     AddRecipeData,
     AddRecipeVars
   >(ADD_RECIPE, {
-    onCompleted: () => recipesRefetch(),
+    onCompleted: () => recipesRefetch?.(),
     onError: (error) => {
       setSomeError(error);
     },
