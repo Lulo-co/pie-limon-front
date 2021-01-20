@@ -1,9 +1,9 @@
-import { useMutation } from '@apollo/client';
 import { Button, Grid, Paper, TextField } from '@material-ui/core';
+import { useMutation } from '@apollo/client';
+import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import React, { useRef } from 'react';
 import { AddRecipeVars, ADD_RECIPE } from './catalog.gql';
 import { IRecipe } from './types';
-import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 
 interface IRecipeForm {
   recipeName: { value: string };

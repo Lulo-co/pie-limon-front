@@ -1,28 +1,15 @@
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import Grid from '@material-ui/core/Grid';
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import React, { useState, useEffect } from 'react';
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-} from '@material-ui/core';
-
 import { GET_RECIPES } from './catalog.gql';
-import RecipeRow from './RecipeRow';
-import { IRecipe } from './types';
 import AddRecipeForm from './AddRecipeForm';
+import { IRecipe } from './types';
+import RecipeList from './RecipeList';
 
 interface GetRecipesData {
   getRecipes: IRecipe[];
 }
- 
 
 function Catalog() {
   const [someError, setSomeError] = useState(null as Error | null);
@@ -66,38 +53,7 @@ function Catalog() {
       </Grid>
 
       <Grid item>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell colSpan={2} style={{ width: '85%' }}>
-                  Nombre
-                </TableCell>
-                <TableCell align="right" style={{ width: '5%' }}>
-                  <IconButton
-                    title="Fotos por receta"
-                    size="small"
-                    style={{
-                      backgroundColor: 'transparent',
-                      cursor: 'default',
-                    }}
-                  >
-                    <PhotoLibraryIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell align="right" style={{ width: '10%' }}>
-                  Acciones
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data &&
-                data.getRecipes.map((recipe) => (
-                  <RecipeRow recipe={recipe} key={recipe.id} />
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <RecipeList recipes={data?.getRecipes || []} />
       </Grid>
     </Grid>
   );
