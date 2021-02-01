@@ -26,6 +26,8 @@ function Catalog() {
     getRecipesQuery();
   }, [getRecipesQuery]);
 
+  const recipes = data?.getRecipes || [];
+
   return (
     <Grid container direction="column" justify="space-around" spacing={3}>
       <Grid item>
@@ -35,6 +37,7 @@ function Catalog() {
           }}
           setSomeError={(e) => setSomeError(e)}
           someError={someError}
+          recipes={recipes}
         />
       </Grid>
 
@@ -53,7 +56,7 @@ function Catalog() {
       </Grid>
 
       <Grid item>
-        <RecipeList recipes={data?.getRecipes || []} />
+        <RecipeList recipes={recipes} />
       </Grid>
     </Grid>
   );
