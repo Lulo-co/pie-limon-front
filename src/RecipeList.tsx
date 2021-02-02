@@ -1,4 +1,3 @@
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import {
   Paper,
   Table,
@@ -9,9 +8,11 @@ import {
   TableRow,
   IconButton,
 } from '@material-ui/core';
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import React from 'react';
-import RecipeRow from './RecipeRow';
+
 import { IRecipe } from './types';
+import RecipeRow from './RecipeRow';
 
 interface RecipeListProps {
   recipes: IRecipe[];

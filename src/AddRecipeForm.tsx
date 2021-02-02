@@ -14,16 +14,16 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { Link } from 'react-router-dom'; 
+import { useMutation } from '@apollo/client';
+import * as SS from 'string-similarity';
+import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import NewReleasesSharpIcon from '@material-ui/icons/NewReleasesSharp';
-import { useMutation } from '@apollo/client';
-import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import React, {  useRef, useState } from 'react';
-import { Link } from 'react-router-dom'; 
 
 import { AddRecipeVars, ADD_RECIPE } from './catalog.gql';
 import { IRecipe } from './types';
-import * as SS from 'string-similarity';
 import { PAGES } from './AppConstants';
 
 interface IRecipeForm {
@@ -56,10 +56,7 @@ const getSimilarRecipeByName = (
   const results = SS.findBestMatch(
     target,
     recipes.map((r) => r.name)
-  );
-
-  console.log(results, results.bestMatch);
-  console.table([...results.ratings].sort().reverse());
+  ); 
 
   return results.ratings.reduce(
     (results: IRecipe[], ratedRecipe: SS.Rating, curretIndex) =>

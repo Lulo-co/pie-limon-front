@@ -2,9 +2,10 @@ import { Alert, AlertTitle } from '@material-ui/lab';
 import { useLazyQuery } from '@apollo/client';
 import Grid from '@material-ui/core/Grid';
 import React, { useState, useEffect } from 'react';
+
 import { GET_RECIPES } from './catalog.gql';
-import AddRecipeForm from './AddRecipeForm';
 import { IRecipe } from './types';
+import AddRecipeForm from './AddRecipeForm';
 import RecipeList from './RecipeList';
 
 interface GetRecipesData {
