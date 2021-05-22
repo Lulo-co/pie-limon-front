@@ -16,7 +16,7 @@ import {
 import { UPLOAD_PHOTO, UploadPhotoVars } from './catalog.gql';
 import { IRecipe } from './types';
 
-import { PAGES } from './AppConstants';
+import { viewRecipe, editRecipe } from './Routes';
 
 interface RecipeRowProps {
   recipe: IRecipe;
@@ -91,7 +91,7 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
   return (
     <TableRow>
       <TableCell>
-        <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>{name}</Link>
+        <Link to={`${viewRecipe(id)}`}>{name}</Link>
       </TableCell>
       <TableCell align="right">
         <Transition
@@ -142,12 +142,12 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
             )}
           </IconButton>
         </label>
-        <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>
+        <Link to={`${editRecipe(id)}`}>
           <IconButton title="Editar receta" size="small">
             <EditIcon />
           </IconButton>
         </Link>
-        <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>
+        <Link to={`${viewRecipe(id)}`}>
           <IconButton title="Ver receta" size="small">
             <VisibilityIcon />
           </IconButton>

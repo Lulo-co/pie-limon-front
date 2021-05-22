@@ -24,7 +24,7 @@ import React, { useRef, useState } from 'react';
 
 import { AddRecipeVars, ADD_RECIPE } from './catalog.gql';
 import { IRecipe } from './types';
-import { PAGES } from './AppConstants';
+import { viewRecipe } from './Routes';
 
 interface IRecipeForm {
   recipeName: { value: string };
@@ -102,7 +102,7 @@ const SimilarNamesDialog: React.FC<SimilarNamesDialogProps> = (props) => {
               key={r.id}
               button
               component={Link}
-              to={`${PAGES.RECIPE_DETAIL}${r.id}`}
+              to={`${viewRecipe(r.id)}`}
             >
               <ListItemIcon>
                 <NewReleasesSharpIcon />

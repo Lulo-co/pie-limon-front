@@ -7,7 +7,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import KitchenTwoToneIcon from '@material-ui/icons/KitchenTwoTone';
 import React, { useState } from 'react';
 
-import { PAGES } from './AppConstants';
+import * as Routes from './Routes';
 import Catalog from './Catalog';
 import Oops from './Oops';
 import RecipeDetail from './RecipeDetail';
@@ -57,7 +57,7 @@ function App() {
       <Router>
         <AppBar position="relative">
           <Toolbar>
-            <Link to={PAGES.ROOT} style={{ display: 'inline-flex' }}>
+            <Link to={Routes.root} style={{ display: 'inline-flex' }}>
               <KitchenTwoToneIcon />
               <Typography variant="h6" color="inherit" noWrap>
                 Recetas
@@ -69,7 +69,7 @@ function App() {
           <Container>
             <Switch>
               <Route
-                path={`${PAGES.RECIPE_DETAIL}:id`}
+                path={`${Routes.viewRecipe()}`}
                 render={loadRoute(RecipeDetail)}
               />
               <Route path={PAGES.ROOT} render={loadRoute(Catalog)} />
