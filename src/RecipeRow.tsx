@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { useMutation } from '@apollo/client';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
+import EditIcon from '@material-ui/icons/Edit';
 import React, { useState } from 'react';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import {
@@ -141,6 +142,11 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
             )}
           </IconButton>
         </label>
+        <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>
+          <IconButton title="Editar receta" size="small">
+            <EditIcon />
+          </IconButton>
+        </Link>
         <Link to={`${PAGES.RECIPE_DETAIL}${id}`}>
           <IconButton title="Ver receta" size="small">
             <VisibilityIcon />
