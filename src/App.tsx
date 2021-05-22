@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 
 import * as Routes from './Routes';
 import Catalog from './Catalog';
+import EditRecipe from './EditRecipe';
 import Oops from './Oops';
 import RecipeDetail from './RecipeDetail';
 
@@ -69,10 +70,14 @@ function App() {
           <Container>
             <Switch>
               <Route
+                path={`${Routes.editRecipe()}`}
+                render={loadRoute(EditRecipe)}
+              />
+              <Route
                 path={`${Routes.viewRecipe()}`}
                 render={loadRoute(RecipeDetail)}
               />
-              <Route path={PAGES.ROOT} render={loadRoute(Catalog)} />
+              <Route path={Routes.root()} render={loadRoute(Catalog)} />
             </Switch>
           </Container>
         </ApolloProvider>

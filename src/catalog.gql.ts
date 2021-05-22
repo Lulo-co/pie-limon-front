@@ -21,6 +21,7 @@ export const GET_RECIPE = gql`
     getRecipe(recipeId: $recipeId) {
       id
       name
+      description
       photos {
         url
       }
