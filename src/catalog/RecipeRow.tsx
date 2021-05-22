@@ -13,10 +13,10 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { UPLOAD_PHOTO, UploadPhotoVars } from './catalog.gql';
-import { IRecipe } from './types';
+import { UPLOAD_PHOTO, UploadPhotoVars } from '../app.gql';
+import { IRecipe } from '../types';
 
-import { viewRecipe, editRecipe } from './Routes';
+import { viewRecipe, editRecipe } from '../Routes';
 
 interface RecipeRowProps {
   recipe: IRecipe;
