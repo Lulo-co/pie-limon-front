@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { Grid, Paper, Snackbar, TextField } from '@material-ui/core';
+import { Grid, Paper, TextField } from '@material-ui/core';
 import React, { ChangeEvent, useState } from 'react';
 
 import { IRecipe, RecipeWrapperChildProps } from '../../types';
@@ -75,7 +75,6 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
           'success',
           'Receta actualizada satisfactoriamente',
           () => {
-            console.log('callback');
             setSuccess(false);
           },
           { duration: 5000, showClose: true }

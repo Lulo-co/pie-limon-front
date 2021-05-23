@@ -1,4 +1,4 @@
-import { Alert, Color } from '@material-ui/lab';
+import { Color } from '@material-ui/lab';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';

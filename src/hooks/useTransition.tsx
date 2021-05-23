@@ -1,5 +1,5 @@
 import { Alert, Color } from '@material-ui/lab';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Transition } from 'react-transition-group';
 
 const defaultStyle = {
@@ -27,15 +27,17 @@ const useTransition = (
   onClose: () => void,
   { styles, duration, showClose }: UseTransitionOptions
 ) => {
-  let id: number;
+  const id = useRef<number>(0);
+
   useEffect(() => {
     if (show) {
-      id = setTimeout(() => {
+      const to = setTimeout(() => {
         onClose();
       }, duration);
-      return () => clearTimeout(id);
+      id.current = to;
+      return () => clearTimeout(id.current);
     }
-  }, [show]);
+  }, [show, duration, onClose]);
   const alertRef = useRef(null);
   return (
     <Transition nodeRef={alertRef} in={show} timeout={1500}>
@@ -52,7 +54,7 @@ const useTransition = (
               showClose
                 ? () => {
                     onClose();
-                    clearTimeout(id);
+                    clearTimeout(id.current);
                   }
                 : undefined
             }
