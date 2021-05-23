@@ -10,7 +10,7 @@ interface GetRecipeData {
   getRecipe: IRecipe;
 }
 
-export const useGetRecipe = (recipeId: string) => {
+const useGetRecipe = (recipeId: string) => {
   const [queryGetRecipe, { loading, data, error }] = useLazyQuery<
     GetRecipeData,
     GetRecipeVars
@@ -46,5 +46,5 @@ export const useGetRecipe = (recipeId: string) => {
   }
 
   return { loading: loadingJsx, data: data?.getRecipe, error: errorJsx };
-}
+};
 export default useGetRecipe;

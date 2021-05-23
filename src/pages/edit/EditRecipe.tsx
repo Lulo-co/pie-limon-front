@@ -4,8 +4,8 @@ import React, { ChangeEvent, useState } from 'react';
 
 import { IRecipe, RecipeWrapperChildProps } from '../../types';
 import { EditRecipeVars, EDIT_RECIPE } from '../../app.gql';
-import { Alert } from '@material-ui/lab';
 import { sendingButton } from '../../components/SendingButton';
+import useTransition from '../../hooks/useTransition';
 
 const useFormFields = <T,>(initialValues: T) => {
   const [formFields, setFormFields] = useState<T>(initialValues);
@@ -60,18 +60,26 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
             },
           });
         })}
-        {someError && (
-          <Snackbar open={!!someError} onClose={() => setSomeError(undefined)}>
-            <Alert onClose={() => setSomeError(undefined)} severity="error">
-              {someError.message}
-            </Alert>
-          </Snackbar>
+        {useTransition(
+          !!someError,
+          'error',
+          someError?.message || '',
+          () => setSomeError(undefined),
+          {
+            duration: 5000,
+            showClose: true,
+          }
         )}
-        <Snackbar open={success} onClose={() => setSuccess(false)}>
-          <Alert onClose={() => setSuccess(false)} severity="success">
-            Receta actualizada satisfactoriamente
-          </Alert>
-        </Snackbar>
+        {useTransition(
+          success,
+          'success',
+          'Receta actualizada satisfactoriamente',
+          () => {
+            console.log('callback');
+            setSuccess(false);
+          },
+          { duration: 5000, showClose: true }
+        )}
       </Grid>
     </Grid>
   );

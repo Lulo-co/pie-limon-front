@@ -1,8 +1,8 @@
 import React from 'react';
-import { useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
-import useGetRecipe from "../hooks/useGetRecipe";
-import { RecipeWrapperChildProps } from "../types";
+import useGetRecipe from '../hooks/useGetRecipe';
+import { RecipeWrapperChildProps } from '../types';
 
 interface RecipeRouteParams {
   id: string;
@@ -19,7 +19,7 @@ const RecipeWrapper: React.FC<RecipeWrapperProps> = ({ Component }) => {
   if (error) return error;
   if (loading) return loading;
   if (!data) return loading;
-  return <Component data={data} />
+  return <Component data={data} />;
 };
 
 export default RecipeWrapper;

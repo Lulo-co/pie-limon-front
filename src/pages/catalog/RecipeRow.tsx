@@ -1,6 +1,5 @@
 import { Alert, Color } from '@material-ui/lab';
 import { Link } from 'react-router-dom';
-import { Transition } from 'react-transition-group';
 import { useMutation } from '@apollo/client';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import EditIcon from '@material-ui/icons/Edit';
@@ -17,6 +16,7 @@ import { UPLOAD_PHOTO, UploadPhotoVars } from '../../app.gql';
 import { IRecipe } from '../../types';
 
 import { viewRecipe, editRecipe } from '../../Routes';
+import useTransition from '../../hooks/useTransition';
 
 interface RecipeRowProps {
   recipe: IRecipe;
@@ -25,20 +25,6 @@ interface RecipeRowProps {
 interface uploadPhotoData {
   attachRecipePhoto: boolean;
 }
-
-const alertDuration = 4000;
-const transitionDuration = 2000;
-const defaultStyle = {
-  transition: `opacity ${transitionDuration}ms ease-in-out`,
-  opacity: 0,
-};
-
-const transitionStyles = {
-  entering: { opacity: 1 },
-  entered: { opacity: 1 },
-  exiting: { opacity: 1 },
-  exited: { opacity: 0 },
-};
 
 let alertType: undefined | string = undefined;
 let alertMessage = 'Foto subida correctamente :)';
@@ -50,9 +36,6 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
 
   const reportError = (error: Error) => {
     setSomeError(error);
-    setTimeout(() => {
-      setSomeError(null);
-    }, alertDuration);
   };
 
   const [uploadFile, { loading: uploading }] = useMutation<
@@ -63,9 +46,6 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
       if (attachRecipePhoto) {
         setFileUploaded(attachRecipePhoto);
         setNumPhotos(numPhotos + 1);
-        setTimeout(() => {
-          setFileUploaded(false);
-        }, alertDuration);
       } else {
         reportError(new Error());
       }
@@ -73,7 +53,6 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
     onError: reportError,
   });
 
-  const alertRef = React.useRef(null);
   let alertDisplay = false;
 
   if (fileUploaded) {
@@ -94,26 +73,19 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
         <Link to={`${viewRecipe(id)}`}>{name}</Link>
       </TableCell>
       <TableCell align="right">
-        <Transition
-          nodeRef={alertRef}
-          in={alertDisplay}
-          timeout={transitionDuration}
-        >
-          {(state: keyof typeof transitionStyles) => {
-            return (
-              <Alert
-                severity={alertType as Color}
-                style={{
-                  padding: '0 11px',
-                  ...defaultStyle,
-                  ...transitionStyles[state],
-                }}
-              >
-                {alertMessage}
-              </Alert>
-            );
-          }}
-        </Transition>
+        {useTransition(
+          alertDisplay,
+          alertType as Color,
+          alertMessage,
+          () => {
+            setSomeError(null);
+            setFileUploaded(false);
+          },
+          {
+            styles: { padding: '0 11px' },
+            duration: 4000,
+          }
+        )}
       </TableCell>
       <TableCell align="right">{numPhotos}</TableCell>
       <TableCell align="right">
