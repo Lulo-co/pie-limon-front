@@ -45,6 +45,6 @@ export const useGetRecipe = (recipeId: string) => {
     );
   }
 
-  return { loading: loadingJsx, data, error: errorJsx };
+  return { loading: loadingJsx, data: data?.getRecipe, error: errorJsx };
 }
 export default useGetRecipe;

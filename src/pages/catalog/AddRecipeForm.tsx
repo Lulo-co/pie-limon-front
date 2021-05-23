@@ -17,7 +17,6 @@ import {
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import * as SS from 'string-similarity';
-import AddTwoToneIcon from '@material-ui/icons/AddTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import NewReleasesSharpIcon from '@material-ui/icons/NewReleasesSharp';
 import React, { useRef, useState } from 'react';
@@ -25,6 +24,7 @@ import React, { useRef, useState } from 'react';
 import { AddRecipeVars, ADD_RECIPE } from '../../app.gql';
 import { IRecipe } from '../../types';
 import { viewRecipe } from '../../Routes';
+import { sendingButton } from '../../components/SendingButton';
 
 interface IRecipeForm {
   recipeName: { value: string };
@@ -37,7 +37,7 @@ interface AddRecipeData {
 interface AddRecipeFormProps {
   recipesRefetch: () => void;
   setSomeError: (error: Error) => void;
-  someError: Error | null;
+  someError?: Error;
   recipes: IRecipe[];
 }
 
@@ -126,26 +126,6 @@ const SimilarNamesDialog: React.FC<SimilarNamesDialogProps> = (props) => {
   );
 };
 
-const addButton = (
-  sending: boolean,
-  someError: Error | null,
-  text: string,
-  onClick?: () => void
-): JSX.Element => (
-  <Button
-    variant="outlined"
-    color="primary"
-    startIcon={<AddTwoToneIcon />}
-    onClick={() => {
-      onClick?.();
-    }}
-    disabled={sending || !!someError}
-    type="submit"
-  >
-    {sending ? '...' : text}
-  </Button>
-);
-
 const AddRecipeForm: React.FC<AddRecipeFormProps> = (props) => {
   const { recipesRefetch, setSomeError, someError, recipes } = props;
 
@@ -189,7 +169,7 @@ const AddRecipeForm: React.FC<AddRecipeFormProps> = (props) => {
         similarRecipes={similarRecipes}
         open={namesModal}
         onClose={setNamesModal}
-        confirmButton={addButton(sending, someError, 'Confirmar', () => {
+        confirmButton={sendingButton(sending, 'Confirmar', someError, () => {
           saveRecipe();
           setNamesModal(false);
         })}
@@ -199,7 +179,7 @@ const AddRecipeForm: React.FC<AddRecipeFormProps> = (props) => {
           <Grid item>
             <TextField required name="recipeName" label="Nombre receta" />
           </Grid>
-          <Grid item>{addButton(sending, someError, 'Agregar')}</Grid>
+          <Grid item>{sendingButton(sending, 'Agregar', someError)}</Grid>
         </Grid>
       </form>
     </Paper>

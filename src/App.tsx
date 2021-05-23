@@ -14,6 +14,7 @@ import Oops from './Oops';
 import RecipeDetail from './pages/detail/RecipeDetail';
 
 import './App.css';
+import RecipeWrapper from './components/RecipeWrapper';
 
 function App() {
   const [token, setToken] = useState('');
@@ -39,7 +40,7 @@ function App() {
     link: authLink.concat(uploadLink),
   });
 
-  const loadRoute = (OkComponent: React.FC) => (): JSX.Element => {
+  const loadRoute = (OkComponent: JSX.Element) => (): JSX.Element => {
     if (!token || !isAllowed) {
       return (
         <Oops
@@ -49,8 +50,8 @@ function App() {
         />
       );
     }
-    return <OkComponent />;
-  }; 
+    return OkComponent;
+  };
 
   return (
     <div className="App">
@@ -71,13 +72,13 @@ function App() {
             <Switch>
               <Route
                 path={`${Routes.editRecipe()}`}
-                render={loadRoute(EditRecipe)}
+                render={loadRoute(<RecipeWrapper Component={EditRecipe} />)}
               />
               <Route
                 path={`${Routes.viewRecipe()}`}
-                render={loadRoute(RecipeDetail)}
+                render={loadRoute(<RecipeWrapper Component={RecipeDetail} />)}
               />
-              <Route path={Routes.root()} render={loadRoute(Catalog)} />
+              <Route path={Routes.root()} render={loadRoute(<Catalog />)} />
             </Switch>
           </Container>
         </ApolloProvider>

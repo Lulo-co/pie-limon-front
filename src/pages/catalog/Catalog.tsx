@@ -13,7 +13,7 @@ interface GetRecipesData {
 }
 
 function Catalog() {
-  const [someError, setSomeError] = useState(null as Error | null);
+  const [someError, setSomeError] = useState<Error>();
   const [
     getRecipesQuery,
     { loading: loadingRecipes, refetch: recipesRefetch, data },

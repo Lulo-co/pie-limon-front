@@ -41,6 +41,19 @@ export const ADD_RECIPE = gql`
   }
 `;
 
+export interface EditRecipeVars {
+  id: number;
+  description: string;
+}
+
+export const EDIT_RECIPE = gql`
+  mutation editRecipe($id: ID!, $description: String) {
+    editRecipe(recipe: { id: $id, description: $description }) {
+      id
+    }
+  }
+`;
+
 export interface UploadPhotoVars {
   file: File;
   recipeId: number;
