@@ -1,9 +1,9 @@
 export interface IRecipe {
-  id: number;
+  id: string;
   name: string;
   description?: string;
-  photos: Array<{ url: string }>;
   num_photos: string;
+  photos: Array<{ url: string }>;
 }
 
 export interface RecipeWrapperChildProps {

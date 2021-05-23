@@ -5,9 +5,7 @@ export const GET_RECIPES = gql`
     getRecipes {
       id
       name
-      photos {
-        id
-      }
+      num_photos
     }
   }
 `;
@@ -42,7 +40,7 @@ export const ADD_RECIPE = gql`
 `;
 
 export interface EditRecipeVars {
-  id: number;
+  id: string;
   description: string;
 }
 
@@ -56,7 +54,7 @@ export const EDIT_RECIPE = gql`
 
 export interface UploadPhotoVars {
   file: File;
-  recipeId: number;
+  recipeId: string;
 }
 
 export const UPLOAD_PHOTO = gql`

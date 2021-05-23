@@ -46,7 +46,7 @@ let alertMessage = 'Foto subida correctamente :)';
 const RecipeRow = ({ recipe }: RecipeRowProps) => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [someError, setSomeError] = useState(null as Error | null);
-  const [numPhotos, setNumPhotos] = useState(recipe.photos.length);
+  const [numPhotos, setNumPhotos] = useState(recipe.num_photos);
 
   const reportError = (error: Error) => {
     setSomeError(error);
