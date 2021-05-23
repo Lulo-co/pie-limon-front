@@ -1,7 +1,6 @@
 import { Alert, AlertTitle } from '@material-ui/lab';
-import { Grid, Paper } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { useLazyQuery } from '@apollo/client';
-import { useParams } from 'react-router-dom';
 import React, { useEffect } from 'react';
 
 import { GET_RECIPE, GetRecipeVars } from '../app.gql';
@@ -11,26 +10,21 @@ interface GetRecipeData {
   getRecipe: IRecipe;
 }
 
-interface RouteParams {
-  id: string;
-}
-
-const RecipeDetail: React.FC = () => {
-  const { id } = useParams<RouteParams>();
-
+export const useGetRecipe = (recipeId: string) => {
   const [queryGetRecipe, { loading, data, error }] = useLazyQuery<
     GetRecipeData,
     GetRecipeVars
   >(GET_RECIPE, {
-    variables: { recipeId: id },
+    variables: { recipeId },
     errorPolicy: 'all',
   });
   useEffect(() => {
     queryGetRecipe();
   }, [queryGetRecipe]);
 
+  let errorJsx = null;
   if (error) {
-    return (
+    errorJsx = (
       <Grid item>
         <Alert severity="error" style={{ margin: 'auto', width: '50%' }}>
           <AlertTitle>Error</AlertTitle>
@@ -40,8 +34,9 @@ const RecipeDetail: React.FC = () => {
     );
   }
 
+  let loadingJsx = null;
   if (loading || !data) {
-    return (
+    loadingJsx = (
       <Grid item>
         <Alert severity="info" style={{ margin: 'auto', width: '33%' }}>
           Cargando Receta ...
@@ -50,15 +45,6 @@ const RecipeDetail: React.FC = () => {
     );
   }
 
-  return (
-    <Grid container direction="column" justify="space-around" spacing={3}>
-      <Grid item style={{ textAlign: 'center' }}>
-        <Paper>
-          <h1>{data!.getRecipe.name}</h1>
-        </Paper>
-      </Grid>
-    </Grid>
-  );
-};
-
-export default RecipeDetail;
+  return { loading: loadingJsx, data, error: errorJsx };
+}
+export default useGetRecipe;

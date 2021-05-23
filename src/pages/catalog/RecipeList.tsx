@@ -11,7 +11,7 @@ import {
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import React from 'react';
 
-import { IRecipe } from '../types';
+import { IRecipe } from '../../types';
 import RecipeRow from './RecipeRow';
 
 interface RecipeListProps {

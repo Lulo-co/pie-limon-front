@@ -1,12 +1,10 @@
-import { Alert, AlertTitle } from '@material-ui/lab';
 import { Grid, Paper, ButtonGroup, Button } from '@material-ui/core';
-import { useLazyQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import { GET_RECIPE, GetRecipeVars } from '../app.gql';
-import { IRecipe } from '../types';
+import { IRecipe } from '../../types';
 import RecipePhoto from './RecipePhoto';
+import useGetRecipe from '../../hooks/useGetRecipe';
 
 interface GetRecipeData {
   getRecipe: IRecipe;
@@ -19,37 +17,10 @@ interface RouteParams {
 const RecipeDetail: React.FC = () => {
   const { id } = useParams<RouteParams>();
   const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
-  const [queryGetRecipe, { loading, data, error }] = useLazyQuery<
-    GetRecipeData,
-    GetRecipeVars
-  >(GET_RECIPE, {
-    variables: { recipeId: id },
-    errorPolicy: 'all',
-  });
-  useEffect(() => {
-    queryGetRecipe();
-  }, [queryGetRecipe]);
+  const { loading, data, error } = useGetRecipe(id);
 
-  if (error) {
-    return (
-      <Grid item>
-        <Alert severity="error" style={{ margin: 'auto', width: '50%' }}>
-          <AlertTitle>Error</AlertTitle>
-          <p>{error.message}</p>
-        </Alert>
-      </Grid>
-    );
-  }
-
-  if (loading || !data) {
-    return (
-      <Grid item>
-        <Alert severity="info" style={{ margin: 'auto', width: '33%' }}>
-          Cargando Receta ...
-        </Alert>
-      </Grid>
-    );
-  }
+  if (error) return error;
+  if (loading) return loading;
 
   return (
     <Grid container direction="column" justify="space-around" spacing={3}>

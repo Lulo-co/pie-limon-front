@@ -8,10 +8,10 @@ import KitchenTwoToneIcon from '@material-ui/icons/KitchenTwoTone';
 import React, { useState } from 'react';
 
 import * as Routes from './Routes';
-import Catalog from './catalog/Catalog';
-import EditRecipe from './edit/EditRecipe';
+import Catalog from './pages/catalog/Catalog';
+import EditRecipe from './pages/edit/EditRecipe';
 import Oops from './Oops';
-import RecipeDetail from './detail/RecipeDetail';
+import RecipeDetail from './pages/detail/RecipeDetail';
 
 import './App.css';
 

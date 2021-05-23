@@ -22,9 +22,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import NewReleasesSharpIcon from '@material-ui/icons/NewReleasesSharp';
 import React, { useRef, useState } from 'react';
 
-import { AddRecipeVars, ADD_RECIPE } from '../app.gql';
-import { IRecipe } from '../types';
-import { viewRecipe } from '../Routes';
+import { AddRecipeVars, ADD_RECIPE } from '../../app.gql';
+import { IRecipe } from '../../types';
+import { viewRecipe } from '../../Routes';
 
 interface IRecipeForm {
   recipeName: { value: string };
