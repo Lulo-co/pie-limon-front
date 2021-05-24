@@ -3,7 +3,7 @@ import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 
 import { RecipeWrapperChildProps } from '../../types';
-import RecipePhoto from './RecipePhoto';
+import RecipePhoto from '../../components/RecipePhoto';
 
 const pagStyles = makeStyles((theme) => ({
   ul: {
@@ -49,7 +49,7 @@ const RecipeDetail: React.FC<RecipeWrapperChildProps> = (props) => {
               }}
             />
           </Grid>
-          <Grid item xs={12} style={{ textAlign: 'center' }}>
+          <Grid item xs={10} style={{ textAlign: 'center' }}>
             {data.photos.map(({ url }, index) => {
               return (
                 <RecipePhoto

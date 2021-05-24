@@ -1,11 +1,22 @@
 import { useMutation } from '@apollo/client';
-import { Grid, Paper, TextField } from '@material-ui/core';
+import {
+  Grid,
+  GridListTile,
+  GridListTileBar,
+  IconButton,
+  makeStyles,
+  Paper,
+  TextField,
+} from '@material-ui/core';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import React, { ChangeEvent, useState } from 'react';
 
 import { IRecipe, RecipeWrapperChildProps } from '../../types';
 import { EditRecipeVars, EDIT_RECIPE } from '../../app.gql';
 import { sendingButton } from '../../components/SendingButton';
 import useTransition from '../../hooks/useTransition';
+import { Pagination } from '@material-ui/lab';
+import RecipePhoto from '../../components/RecipePhoto';
 
 const useFormFields = <T,>(initialValues: T) => {
   const [formFields, setFormFields] = useState<T>(initialValues);
@@ -22,11 +33,26 @@ interface EditRecipeData {
   addRecipe: IRecipe;
 }
 
+const paginationStyles = makeStyles((theme) => ({
+  ul: {
+    justifyContent: 'center',
+  },
+}));
+
+const iconStyles = makeStyles((theme) => ({
+  icon: {
+    color: 'white',
+  },
+}));
+
 const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
   const { data } = props;
   const { formFields, createChangeHandler } = useFormFields<IRecipe>(data);
   const [success, setSuccess] = useState(false);
   const [someError, setSomeError] = useState<Error>();
+  const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
+  const paginationClasses = paginationStyles();
+  const iconClasses = iconStyles();
 
   const [editRecipe, { loading: sending }] = useMutation<
     EditRecipeData,
@@ -104,7 +130,41 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
           </Grid>
         </Grid>
         <Grid container direction="row" justify="space-around" spacing={3}>
-          <Grid item xs={7}></Grid>
+          <Grid item xs={12}>
+            <Pagination
+              count={data.photos.length}
+              color="primary"
+              classes={paginationClasses}
+              onChange={(e, v) => {
+                setcurrentPhotoIndex(v - 1);
+              }}
+            />
+          </Grid>
+          <Grid item xs={6} style={{ textAlign: 'center' }}>
+            {data.photos.map(({ url }, index) => {
+              return (
+                <GridListTile component="div" key={index}>
+                  <RecipePhoto
+                    url={url}
+                    visible={index === currentPhotoIndex}
+                  />
+                  {index === currentPhotoIndex && (
+                    <GridListTileBar
+                      titlePosition="top"
+                      actionIcon={
+                        <IconButton
+                          className={iconClasses.icon}
+                          title="Eliminar foto"
+                        >
+                          <DeleteForeverIcon />
+                        </IconButton>
+                      }
+                    />
+                  )}
+                </GridListTile>
+              );
+            })}
+          </Grid>
         </Grid>
       </Paper>
     </>
