@@ -49,7 +49,7 @@ function App() {
       );
     }
     return <OkComponent />;
-  };
+  }; 
 
   return (
     <div className="App">
