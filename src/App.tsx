@@ -64,7 +64,7 @@ function App() {
               </Typography>
             </Link>
           </Toolbar>
-        </AppBar> 
+        </AppBar>
         <ApolloProvider client={client}>
           <Container>
             <Switch>
