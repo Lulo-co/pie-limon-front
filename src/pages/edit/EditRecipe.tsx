@@ -9,6 +9,8 @@ import {
   TextField,
 } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import React, { ChangeEvent, useState } from 'react';
 
 import { IRecipe, RecipeWrapperChildProps } from '../../types';
@@ -17,6 +19,7 @@ import { sendingButton } from '../../components/SendingButton';
 import useTransition from '../../hooks/useTransition';
 import { Pagination } from '@material-ui/lab';
 import RecipePhoto from '../../components/RecipePhoto';
+import useAddPhoto from '../../hooks/useAddPhoto';
 
 const useFormFields = <T,>(initialValues: T) => {
   const [formFields, setFormFields] = useState<T>(initialValues);
@@ -51,6 +54,15 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
   const [success, setSuccess] = useState(false);
   const [someError, setSomeError] = useState<Error>();
   const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
+  const {
+    someError: errorAddPhoto,
+    uploadFile,
+    loading: sendingPhoto,
+  } = useAddPhoto(() => {
+    //TODO: feedback when upload photo is successful or not
+    console.log('subio');
+  });
+
   const paginationClasses = paginationStyles();
   const iconClasses = iconStyles();
 
@@ -85,13 +97,17 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
             />
           </Grid>
           <Grid item xs={2} style={{ paddingTop: 15, paddingBottom: 15 }}>
-            {sendingButton(sending, 'Guardar', someError, () => {
-              editRecipe({
-                variables: {
-                  id: formFields.id,
-                  description: formFields.description || '',
-                },
-              });
+            {sendingButton(sending, 'Guardar', {
+              someError,
+              startIcon: <SaveAltIcon />,
+              onClick: () => {
+                editRecipe({
+                  variables: {
+                    id: formFields.id,
+                    description: formFields.description || '',
+                  },
+                });
+              },
             })}
           </Grid>
           <Grid item xs={8}>
@@ -122,11 +138,31 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
           </Grid>
         </Grid>
       </Paper>
-
+      {console.log(sendingPhoto, errorAddPhoto)}
       <Paper style={{ padding: 15 }}>
         <Grid container direction="row" justify="space-between" spacing={3}>
-          <Grid item>
+          <Grid item xs={10}>
             <h2 style={{ margin: 0 }}>Fotos de la receta</h2>
+          </Grid>
+          <Grid item xs={2} style={{ textAlign: 'right' }}>
+            <input
+              accept="image/*"
+              type="file"
+              style={{ display: 'none' }}
+              id={`add-photo`}
+              onChange={({ target: { files } }) => {
+                const file = files![0];
+                file &&
+                  uploadFile({ variables: { file: file, recipeId: data.id } });
+              }}
+              disabled={sendingPhoto || !!errorAddPhoto}
+            />
+            <label htmlFor={`add-photo`}>
+              {sendingButton(sendingPhoto, 'Agregar Foto', {
+                startIcon: <AddPhotoAlternateIcon />,
+                componentDiv: true,
+              })}
+            </label>
           </Grid>
         </Grid>
         <Grid container direction="row" justify="space-around" spacing={3}>
@@ -155,6 +191,10 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
                         <IconButton
                           className={iconClasses.icon}
                           title="Eliminar foto"
+                          onClick={() => {
+                            //TODO: Call backend to delete photo
+                            console.log('click');
+                          }}
                         >
                           <DeleteForeverIcon />
                         </IconButton>

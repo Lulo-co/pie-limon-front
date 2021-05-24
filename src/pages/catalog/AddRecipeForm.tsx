@@ -169,9 +169,12 @@ const AddRecipeForm: React.FC<AddRecipeFormProps> = (props) => {
         similarRecipes={similarRecipes}
         open={namesModal}
         onClose={setNamesModal}
-        confirmButton={sendingButton(sending, 'Confirmar', someError, () => {
-          saveRecipe();
-          setNamesModal(false);
+        confirmButton={sendingButton(sending, 'Confirmar', {
+          someError,
+          onClick: () => {
+            saveRecipe();
+            setNamesModal(false);
+          },
         })}
       />
       <form ref={recipeForm} onSubmit={onRecipeSubmit}>
@@ -179,7 +182,7 @@ const AddRecipeForm: React.FC<AddRecipeFormProps> = (props) => {
           <Grid item>
             <TextField required name="recipeName" label="Nombre receta" />
           </Grid>
-          <Grid item>{sendingButton(sending, 'Agregar', someError)}</Grid>
+          <Grid item>{sendingButton(sending, 'Agregar', { someError })}</Grid>
         </Grid>
       </form>
     </Paper>

@@ -5,19 +5,27 @@ import React from 'react';
 export const sendingButton = (
   sending: boolean,
   text: string,
-  someError?: Error | undefined,
-  onClick?: () => void
-): JSX.Element => (
-  <Button
-    variant="outlined"
-    color="primary"
-    startIcon={sending ? <CircularProgress size={20} /> : <AddTwoToneIcon />}
-    onClick={() => {
-      onClick?.();
-    }}
-    disabled={sending || !!someError}
-    type="submit"
-  >
-    {sending ? 'Enviando' : text}
-  </Button>
-);
+  options?: {
+    someError?: Error;
+    onClick?: () => void;
+    startIcon?: JSX.Element;
+    componentDiv?: boolean;
+  }
+): JSX.Element => {
+  const startIcon = options?.startIcon ?? <AddTwoToneIcon />;
+  return (
+    <Button
+      variant="outlined"
+      color="primary"
+      component={options?.componentDiv ? 'div' : 'button'}
+      startIcon={sending ? <CircularProgress size={20} /> : startIcon}
+      onClick={() => {
+        options?.onClick?.();
+      }}
+      disabled={sending || !!options?.someError}
+      type="submit"
+    >
+      {sending ? 'Enviando' : text}
+    </Button>
+  );
+};

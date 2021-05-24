@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import EditIcon from '@material-ui/icons/Edit';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import {
   TableRow,
@@ -17,6 +17,7 @@ import { IRecipe } from '../../types';
 
 import { viewRecipe, editRecipe } from '../../Routes';
 import useTransition from '../../hooks/useTransition';
+import useAddPhoto from '../../hooks/useAddPhoto';
 
 interface RecipeRowProps {
   recipe: IRecipe;
@@ -31,26 +32,18 @@ let alertMessage = 'Foto subida correctamente :)';
 
 const RecipeRow = ({ recipe }: RecipeRowProps) => {
   const [fileUploaded, setFileUploaded] = useState(false);
-  const [someError, setSomeError] = useState(null as Error | null);
   const [numPhotos, setNumPhotos] = useState(recipe.num_photos);
 
-  const reportError = (error: Error) => {
-    setSomeError(error);
-  };
-
-  const [uploadFile, { loading: uploading }] = useMutation<
-    uploadPhotoData,
-    UploadPhotoVars
-  >(UPLOAD_PHOTO, {
-    onCompleted: ({ attachRecipePhoto }) => {
-      if (attachRecipePhoto) {
-        setFileUploaded(attachRecipePhoto);
-        setNumPhotos(numPhotos + 1);
-      } else {
-        reportError(new Error());
-      }
-    },
-    onError: reportError,
+  const {
+    someError,
+    uploadFile,
+    loading: uploading,
+    setSomeError,
+  } = useAddPhoto((attachRecipePhoto) => {
+    if (attachRecipePhoto) {
+      setFileUploaded(attachRecipePhoto);
+      setNumPhotos(numPhotos + 1);
+    }
   });
 
   let alertDisplay = false;
@@ -78,7 +71,7 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
           alertType as Color,
           alertMessage,
           () => {
-            setSomeError(null);
+            setSomeError(undefined);
             setFileUploaded(false);
           },
           {
