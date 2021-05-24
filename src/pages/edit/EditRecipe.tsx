@@ -9,12 +9,12 @@ import useTransition from '../../hooks/useTransition';
 
 const useFormFields = <T,>(initialValues: T) => {
   const [formFields, setFormFields] = useState<T>(initialValues);
-  const createChangeHandler = (key: keyof T) => (
-    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const value = e.target.value;
-    setFormFields((prev: T) => ({ ...prev, [key]: value }));
-  };
+  const createChangeHandler =
+    (key: keyof T) =>
+    (e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setFormFields((prev: T) => ({ ...prev, [key]: value }));
+    };
   return { formFields, createChangeHandler };
 };
 
@@ -39,48 +39,75 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
   });
 
   return (
-    <Grid container direction="column" justify="space-around" spacing={3}>
-      <Grid item style={{ textAlign: 'center' }}>
-        <h1>{data.name}</h1>
-        <Paper>
-          <TextField
-            label="Descripción"
-            multiline
-            rows={4}
-            variant="outlined"
-            value={formFields.description || ''}
-            onChange={createChangeHandler('description')}
-          />
-        </Paper>
-        {sendingButton(sending, 'Guardar', someError, () => {
-          editRecipe({
-            variables: {
-              id: formFields.id,
-              description: formFields.description || '',
-            },
-          });
-        })}
-        {useTransition(
-          !!someError,
-          'error',
-          someError?.message || '',
-          () => setSomeError(undefined),
-          {
-            duration: 5000,
-            showClose: true,
-          }
-        )}
-        {useTransition(
-          success,
-          'success',
-          'Receta actualizada satisfactoriamente',
-          () => {
-            setSuccess(false);
-          },
-          { duration: 5000, showClose: true }
-        )}
+    <>
+      <Grid container direction="column" justify="space-around" spacing={3}>
+        <Grid item style={{ textAlign: 'center' }}>
+          <h1>{data.name}</h1>
+        </Grid>
       </Grid>
-    </Grid>
+      <Paper style={{ padding: 15, marginBottom: 15 }}>
+        <Grid container direction="row" alignItems="center" spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Descripción"
+              multiline
+              rows={10}
+              variant="outlined"
+              style={{ width: '85%' }}
+              value={formFields.description || ''}
+              onChange={createChangeHandler('description')}
+            />
+          </Grid>
+          <Grid item xs={2} style={{ paddingTop: 15, paddingBottom: 15 }}>
+            {sendingButton(sending, 'Guardar', someError, () => {
+              editRecipe({
+                variables: {
+                  id: formFields.id,
+                  description: formFields.description || '',
+                },
+              });
+            })}
+          </Grid>
+          <Grid item xs={8}>
+            {useTransition(
+              !!someError,
+              'error',
+              someError?.message || '',
+              () => setSomeError(undefined),
+              {
+                duration: 5000,
+                showClose: true,
+                styles: { display: !!someError ? 'flex' : 'none' },
+              }
+            )}
+            {useTransition(
+              success,
+              'success',
+              'Receta actualizada satisfactoriamente',
+              () => {
+                setSuccess(false);
+              },
+              {
+                duration: 5000,
+                showClose: true,
+                styles: { display: success ? 'flex' : 'none' },
+              }
+            )}
+          </Grid>
+        </Grid>
+      </Paper>
+
+      <Paper style={{ padding: 15 }}>
+        <Grid container direction="row" justify="space-between" spacing={3}>
+          <Grid item>
+            <h2 style={{ margin: 0 }}>Fotos de la receta</h2>
+          </Grid>
+        </Grid>
+        <Grid container direction="row" justify="space-around" spacing={3}>
+          <Grid item xs={7}></Grid>
+        </Grid>
+      </Paper>
+    </>
   );
 };
 
