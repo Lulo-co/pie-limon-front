@@ -1,17 +1,11 @@
-import {
-  Grid,
-  Paper,
-  ButtonGroup,
-  Button,
-  makeStyles,
-} from '@material-ui/core';
+import { Grid, Paper, makeStyles } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 
 import { RecipeWrapperChildProps } from '../../types';
 import RecipePhoto from './RecipePhoto';
 
-const useStyles = makeStyles((theme) => ({
+const pagStyles = makeStyles((theme) => ({
   ul: {
     justifyContent: 'center',
   },
@@ -20,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 const RecipeDetail: React.FC<RecipeWrapperChildProps> = (props) => {
   const { data } = props;
   const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
-  const classes = useStyles();
+  const classes = pagStyles();
 
   return (
     <div style={{ flexGrow: 1 }}>
@@ -39,7 +33,13 @@ const RecipeDetail: React.FC<RecipeWrapperChildProps> = (props) => {
           alignItems="center"
           spacing={3}
         >
-          <Grid item xs={6}>
+          <Grid item xs={10}>
+            <Paper elevation={0} variant="outlined" style={{ padding: 15 }}>
+              <h4 style={{ marginTop: 0 }}>Descripción</h4>
+              {data.description}
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
             <Pagination
               count={data.photos.length}
               color="primary"
