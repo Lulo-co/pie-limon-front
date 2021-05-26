@@ -5,7 +5,3 @@ export interface IRecipe {
   num_photos: string;
   photos: Array<{ url: string }>;
 }
-
-export interface RecipeWrapperChildProps {
-  data: IRecipe;
-}

@@ -1,5 +1,5 @@
 import { Alert, Color } from '@material-ui/lab';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Transition } from 'react-transition-group';
 
 const defaultStyle = {
@@ -14,49 +14,86 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-interface UseTransitionOptions {
-  styles?: any;
-  duration?: number;
-  showClose?: boolean;
+interface SharedOptions {
+  styles?: React.CSSProperties;
 }
+
+interface DurationOptions extends SharedOptions {
+  duration: number;
+}
+
+interface OnCloseOptions extends SharedOptions {
+  onClose: () => void;
+}
+
+type AllOptions = DurationOptions & OnCloseOptions;
+
+type options = DurationOptions | OnCloseOptions | AllOptions;
+
+const isDurationOptions = (options: options): options is DurationOptions => {
+  return (
+    (options as DurationOptions).duration !== undefined &&
+    (options as OnCloseOptions).onClose === undefined
+  );
+};
+
+const isOnCloseOptions = (options: options): options is OnCloseOptions => {
+  return (
+    (options as OnCloseOptions).onClose !== undefined &&
+    (options as DurationOptions).duration === undefined
+  );
+};
+
+const isAllOptions = (options: options): options is AllOptions => {
+  return (
+    (options as OnCloseOptions).onClose !== undefined &&
+    (options as DurationOptions).duration !== undefined
+  );
+};
 
 const useTransition = (
   show: boolean,
   severity: Color,
   message: string,
-  onClose: () => void,
-  { styles, duration, showClose }: UseTransitionOptions
-) => {
+  options: options
+): JSX.Element => {
   const id = useRef<number>(0);
+  const [visible, setVisible] = useState(false);
+  const alertRef = useRef(null);
 
   useEffect(() => {
     if (show) {
-      const to = setTimeout(() => {
-        onClose();
-      }, duration);
-      id.current = to;
-      return () => clearTimeout(id.current);
+      setVisible(true);
+      if (!isOnCloseOptions(options)) {
+        id.current = setTimeout(() => {
+          setVisible(false);
+        }, options.duration);
+        return () => clearTimeout(id.current);
+      }
     }
-  }, [show, duration, onClose]);
-  const alertRef = useRef(null);
+  }, [show]);
+
   return (
-    <Transition nodeRef={alertRef} in={show} timeout={1500}>
+    <Transition nodeRef={alertRef} in={visible} timeout={1500}>
       {(state: keyof typeof transitionStyles) => {
         return (
           <Alert
             severity={severity}
             style={{
-              ...styles,
+              ...options.styles,
               ...defaultStyle,
               ...transitionStyles[state],
             }}
             onClose={
-              showClose
-                ? () => {
-                    onClose();
-                    clearTimeout(id.current);
+              isDurationOptions(options)
+                ? undefined
+                : () => {
+                    setVisible(false);
+                    options.onClose();
+                    if (isAllOptions(options)) {
+                      clearTimeout(id.current);
+                    }
                   }
-                : undefined
             }
           >
             {message}

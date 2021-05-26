@@ -2,10 +2,10 @@ import { Grid, Paper, makeStyles } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 
-import { RecipeWrapperChildProps } from '../../types';
 import RecipePhoto from '../../components/RecipePhoto';
+import { RecipeWrapperChildProps } from '../../components/RecipeWrapper';
 
-const pagStyles = makeStyles((theme) => ({
+const pagStyles = makeStyles(() => ({
   ul: {
     justifyContent: 'center',
   },

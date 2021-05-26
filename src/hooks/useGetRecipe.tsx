@@ -1,7 +1,7 @@
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
-import { useLazyQuery } from '@apollo/client';
-import React, { useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import React from 'react';
 
 import { GET_RECIPE, GetRecipeVars } from '../app.gql';
 import { IRecipe } from '../types';
@@ -10,17 +10,21 @@ interface GetRecipeData {
   getRecipe: IRecipe;
 }
 
-const useGetRecipe = (recipeId: string) => {
-  const [queryGetRecipe, { loading, data, error }] = useLazyQuery<
+interface getRecipeResult {
+  loading: JSX.Element | null;
+  data?: IRecipe;
+  error: JSX.Element | null;
+  refetch: () => void;
+}
+
+const useGetRecipe = (recipeId: string): getRecipeResult => {
+  const { loading, data, error, refetch } = useQuery<
     GetRecipeData,
     GetRecipeVars
   >(GET_RECIPE, {
     variables: { recipeId },
     errorPolicy: 'all',
   });
-  useEffect(() => {
-    queryGetRecipe();
-  }, [queryGetRecipe]);
 
   let errorJsx = null;
   if (error) {
@@ -45,6 +49,11 @@ const useGetRecipe = (recipeId: string) => {
     );
   }
 
-  return { loading: loadingJsx, data: data?.getRecipe, error: errorJsx };
+  return {
+    loading: loadingJsx,
+    data: data?.getRecipe,
+    error: errorJsx,
+    refetch,
+  };
 };
 export default useGetRecipe;

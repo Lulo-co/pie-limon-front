@@ -1,6 +1,5 @@
 import { Color } from '@material-ui/lab';
 import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import EditIcon from '@material-ui/icons/Edit';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +11,6 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 
-import { UPLOAD_PHOTO, UploadPhotoVars } from '../../app.gql';
 import { IRecipe } from '../../types';
 
 import { viewRecipe, editRecipe } from '../../Routes';
@@ -23,28 +21,21 @@ interface RecipeRowProps {
   recipe: IRecipe;
 }
 
-interface uploadPhotoData {
-  attachRecipePhoto: boolean;
-}
-
 let alertType: undefined | string = undefined;
 let alertMessage = 'Foto subida correctamente :)';
 
-const RecipeRow = ({ recipe }: RecipeRowProps) => {
+const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }) => {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [numPhotos, setNumPhotos] = useState(recipe.num_photos);
 
-  const {
-    someError,
-    uploadFile,
-    loading: uploading,
-    setSomeError,
-  } = useAddPhoto((attachRecipePhoto) => {
-    if (attachRecipePhoto) {
-      setFileUploaded(attachRecipePhoto);
+  const { someError, uploadFile, loading: uploading, success } = useAddPhoto();
+
+  useEffect(() => {
+    if (success) {
+      setFileUploaded(success);
       setNumPhotos(numPhotos + 1);
     }
-  });
+  }, [success]);
 
   let alertDisplay = false;
 
@@ -66,19 +57,10 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
         <Link to={`${viewRecipe(id)}`}>{name}</Link>
       </TableCell>
       <TableCell align="right">
-        {useTransition(
-          alertDisplay,
-          alertType as Color,
-          alertMessage,
-          () => {
-            setSomeError(undefined);
-            setFileUploaded(false);
-          },
-          {
-            styles: { padding: '0 11px' },
-            duration: 4000,
-          }
-        )}
+        {useTransition(alertDisplay, alertType as Color, alertMessage, {
+          styles: { padding: '0 11px' },
+          duration: 4000,
+        })}
       </TableCell>
       <TableCell align="right">{numPhotos}</TableCell>
       <TableCell align="right">
@@ -88,8 +70,9 @@ const RecipeRow = ({ recipe }: RecipeRowProps) => {
           style={{ display: 'none' }}
           id={`add-photo-${id}`}
           onChange={({ target: { files } }) => {
-            const file = files![0];
-            file && uploadFile({ variables: { file: file, recipeId: id } });
+            if (files?.[0]) {
+              uploadFile({ variables: { file: files[0], recipeId: id } });
+            }
           }}
           disabled={uploading || !!someError}
         />

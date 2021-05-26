@@ -1,13 +1,24 @@
-import { useMutation } from '@apollo/client';
-import React, { useState } from 'react';
+import { MutationFunctionOptions, useMutation } from '@apollo/client';
+import { useState } from 'react';
 import { UploadPhotoVars, UPLOAD_PHOTO } from '../app.gql';
 
 interface uploadPhotoData {
   attachRecipePhoto: boolean;
 }
 
-const useAddPhoto = (onSuccess: (a: boolean) => void) => {
+interface addPhotoResult {
+  someError?: Error;
+  uploadFile: (
+    options?: MutationFunctionOptions<uploadPhotoData, UploadPhotoVars>
+  ) => void;
+  loading: boolean;
+  success: boolean;
+}
+
+const useAddPhoto = (): addPhotoResult => {
   const [someError, setSomeError] = useState<Error>();
+  const [success, setSuccess] = useState<boolean>(false);
+
   const reportError = (error: Error) => {
     setSomeError(error);
   };
@@ -17,7 +28,7 @@ const useAddPhoto = (onSuccess: (a: boolean) => void) => {
   >(UPLOAD_PHOTO, {
     onCompleted: ({ attachRecipePhoto }) => {
       if (attachRecipePhoto) {
-        onSuccess(attachRecipePhoto);
+        setSuccess(true);
       } else {
         reportError(new Error());
       }
@@ -25,7 +36,7 @@ const useAddPhoto = (onSuccess: (a: boolean) => void) => {
     onError: reportError,
   });
 
-  return { someError, setSomeError, uploadFile, loading };
+  return { someError, uploadFile, loading, success };
 };
 
 export default useAddPhoto;

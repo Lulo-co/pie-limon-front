@@ -11,15 +11,16 @@ import {
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
-import { IRecipe, RecipeWrapperChildProps } from '../../types';
+import { IRecipe } from '../../types';
 import { EditRecipeVars, EDIT_RECIPE } from '../../app.gql';
 import { sendingButton } from '../../components/SendingButton';
 import useTransition from '../../hooks/useTransition';
 import { Pagination } from '@material-ui/lab';
 import RecipePhoto from '../../components/RecipePhoto';
 import useAddPhoto from '../../hooks/useAddPhoto';
+import { RecipeWrapperChildProps } from '../../components/RecipeWrapper';
 
 const useFormFields = <T,>(initialValues: T) => {
   const [formFields, setFormFields] = useState<T>(initialValues);
@@ -36,20 +37,20 @@ interface EditRecipeData {
   addRecipe: IRecipe;
 }
 
-const paginationStyles = makeStyles((theme) => ({
+const paginationStyles = makeStyles(() => ({
   ul: {
     justifyContent: 'center',
   },
 }));
 
-const iconStyles = makeStyles((theme) => ({
+const iconStyles = makeStyles(() => ({
   icon: {
     color: 'white',
   },
 }));
 
 const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
-  const { data } = props;
+  const { data, refetch } = props;
   const { formFields, createChangeHandler } = useFormFields<IRecipe>(data);
   const [success, setSuccess] = useState(false);
   const [someError, setSomeError] = useState<Error>();
@@ -58,10 +59,12 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
     someError: errorAddPhoto,
     uploadFile,
     loading: sendingPhoto,
-  } = useAddPhoto(() => {
-    //TODO: feedback when upload photo is successful or not
-    console.log('subio');
-  });
+    success: successAddPhoto,
+  } = useAddPhoto();
+
+  useEffect(() => {
+    refetch();
+  }, [successAddPhoto]);
 
   const paginationClasses = paginationStyles();
   const iconClasses = iconStyles();
@@ -111,38 +114,52 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
             })}
           </Grid>
           <Grid item xs={8}>
-            {useTransition(
-              !!someError,
-              'error',
-              someError?.message || '',
-              () => setSomeError(undefined),
-              {
-                duration: 5000,
-                showClose: true,
-                styles: { display: !!someError ? 'flex' : 'none' },
-              }
-            )}
+            {useTransition(!!someError, 'error', someError?.message || '', {
+              duration: 5000,
+              onClose: () => {
+                setSomeError(undefined);
+              },
+              styles: { display: someError ? 'flex' : 'none' },
+            })}
             {useTransition(
               success,
               'success',
               'Receta actualizada satisfactoriamente',
-              () => {
-                setSuccess(false);
-              },
               {
                 duration: 5000,
-                showClose: true,
+                onClose: () => {
+                  setSuccess(false);
+                },
                 styles: { display: success ? 'flex' : 'none' },
               }
             )}
           </Grid>
         </Grid>
       </Paper>
-      {console.log(sendingPhoto, errorAddPhoto)}
       <Paper style={{ padding: 15 }}>
         <Grid container direction="row" justify="space-between" spacing={3}>
-          <Grid item xs={10}>
+          <Grid item xs={7}>
             <h2 style={{ margin: 0 }}>Fotos de la receta</h2>
+          </Grid>
+          <Grid item xs={3} style={{ textAlign: 'right' }}>
+            {useTransition(
+              !!errorAddPhoto,
+              'error',
+              errorAddPhoto?.message || '',
+              {
+                duration: 3000,
+                styles: { display: errorAddPhoto ? 'flex' : 'none' },
+              }
+            )}
+            {useTransition(
+              successAddPhoto,
+              'success',
+              'Foto agregada satisfactoriamente',
+              {
+                duration: 3000,
+                styles: { display: successAddPhoto ? 'flex' : 'none' },
+              }
+            )}
           </Grid>
           <Grid item xs={2} style={{ textAlign: 'right' }}>
             <input
@@ -151,9 +168,11 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
               style={{ display: 'none' }}
               id={`add-photo`}
               onChange={({ target: { files } }) => {
-                const file = files![0];
-                file &&
-                  uploadFile({ variables: { file: file, recipeId: data.id } });
+                if (files?.[0]) {
+                  uploadFile({
+                    variables: { file: files[0], recipeId: data.id },
+                  });
+                }
               }}
               disabled={sendingPhoto || !!errorAddPhoto}
             />
@@ -166,15 +185,19 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
           </Grid>
         </Grid>
         <Grid container direction="row" justify="space-around" spacing={3}>
-          <Grid item xs={12}>
-            <Pagination
-              count={data.photos.length}
-              color="primary"
-              classes={paginationClasses}
-              onChange={(e, v) => {
-                setcurrentPhotoIndex(v - 1);
-              }}
-            />
+          <Grid item xs={12} style={{ textAlign: 'center' }}>
+            {data.photos.length > 0 ? (
+              <Pagination
+                count={data.photos.length}
+                color="primary"
+                classes={paginationClasses}
+                onChange={(e, v) => {
+                  setcurrentPhotoIndex(v - 1);
+                }}
+              />
+            ) : (
+              <h4>La receta no tiene fotos aún </h4>
+            )}
           </Grid>
           <Grid item xs={6} style={{ textAlign: 'center' }}>
             {data.photos.map(({ url }, index) => {
