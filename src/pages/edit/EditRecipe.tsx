@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client';
 import {
+  CircularProgress,
   Grid,
   GridListTile,
   GridListTileBar,
@@ -21,6 +22,7 @@ import { Pagination } from '@material-ui/lab';
 import RecipePhoto from '../../components/RecipePhoto';
 import useAddPhoto from '../../hooks/useAddPhoto';
 import { RecipeWrapperChildProps } from '../../components/RecipeWrapper';
+import useDeletePhoto from '../../hooks/useDeletePhoto';
 
 const useFormFields = <T,>(initialValues: T) => {
   const [formFields, setFormFields] = useState<T>(initialValues);
@@ -61,10 +63,16 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
     loading: sendingPhoto,
     success: successAddPhoto,
   } = useAddPhoto();
+  const {
+    error: errorDeletePhoto,
+    deletePhoto,
+    loading: deletingPhoto,
+    success: successDeletePhoto,
+  } = useDeletePhoto();
 
   useEffect(() => {
-    refetch();
-  }, [successAddPhoto]);
+    if (successAddPhoto || successDeletePhoto) refetch();
+  }, [successAddPhoto, successDeletePhoto]);
 
   const paginationClasses = paginationStyles();
   const iconClasses = iconStyles();
@@ -138,14 +146,14 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
       </Paper>
       <Paper style={{ padding: 15 }}>
         <Grid container direction="row" justify="space-between" spacing={3}>
-          <Grid item xs={7}>
+          <Grid item xs={6}>
             <h2 style={{ margin: 0 }}>Fotos de la receta</h2>
           </Grid>
-          <Grid item xs={3} style={{ textAlign: 'right' }}>
+          <Grid item xs={4} style={{ textAlign: 'right' }}>
             {useTransition(
               !!errorAddPhoto,
               'error',
-              errorAddPhoto?.message || '',
+              errorAddPhoto?.message || 'Error agregando foto',
               {
                 duration: 3000,
                 styles: { display: errorAddPhoto ? 'flex' : 'none' },
@@ -158,6 +166,24 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
               {
                 duration: 3000,
                 styles: { display: successAddPhoto ? 'flex' : 'none' },
+              }
+            )}
+            {useTransition(
+              !!errorDeletePhoto,
+              'error',
+              errorDeletePhoto?.message || 'Error eliminando foto',
+              {
+                duration: 3000,
+                styles: { display: errorDeletePhoto ? 'flex' : 'none' },
+              }
+            )}
+            {useTransition(
+              successDeletePhoto,
+              'success',
+              'Foto eliminada satisfactoriamente',
+              {
+                duration: 3000,
+                styles: { display: successDeletePhoto ? 'flex' : 'none' },
               }
             )}
           </Grid>
@@ -215,11 +241,15 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
                           className={iconClasses.icon}
                           title="Eliminar foto"
                           onClick={() => {
-                            //TODO: Call backend to delete photo
-                            console.log('click');
+                            deletePhoto(url);
                           }}
+                          disabled={deletingPhoto}
                         >
-                          <DeleteForeverIcon />
+                          {deletingPhoto ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <DeleteForeverIcon />
+                          )}
                         </IconButton>
                       }
                     />

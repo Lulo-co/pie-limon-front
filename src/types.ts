@@ -3,5 +3,9 @@ export interface IRecipe {
   name: string;
   description?: string;
   num_photos: string;
-  photos: Array<{ url: string }>;
+  photos: Array<IRecipePhoto>;
+}
+
+export interface IRecipePhoto {
+  url: string;
 }

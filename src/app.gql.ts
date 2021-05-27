@@ -57,8 +57,26 @@ export interface UploadPhotoVars {
   recipeId: string;
 }
 
+export interface UploadPhotoData {
+  attachRecipePhoto: boolean;
+}
+
 export const UPLOAD_PHOTO = gql`
   mutation attachRecipePhoto($file: Upload!, $recipeId: ID!) {
     attachRecipePhoto(file: { file: $file }, recipeId: $recipeId)
+  }
+`;
+
+export interface DeletePhotoVars {
+  url: string;
+}
+
+export interface DeletePhotoData {
+  deleteRecipePhoto: boolean;
+}
+
+export const DELETE_PHOTO = gql`
+  mutation deleteRecipePhoto($url: String!) {
+    deleteRecipePhoto(url: $url)
   }
 `;
