@@ -26,7 +26,10 @@ interface OnCloseOptions extends SharedOptions {
   onClose: () => void;
 }
 
-type AllOptions = DurationOptions & OnCloseOptions;
+type AllOptions = DurationOptions &
+  OnCloseOptions & {
+    showClose: boolean;
+  };
 
 type options = DurationOptions | OnCloseOptions | AllOptions;
 
@@ -85,7 +88,8 @@ const useTransition = (
               ...transitionStyles[state],
             }}
             onClose={
-              isDurationOptions(options)
+              isDurationOptions(options) ||
+              (isAllOptions(options) && !options.showClose)
                 ? undefined
                 : () => {
                     setVisible(false);

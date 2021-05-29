@@ -57,6 +57,8 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
   const [success, setSuccess] = useState(false);
   const [someError, setSomeError] = useState<Error>();
   const [currentPhotoIndex, setcurrentPhotoIndex] = useState(0);
+  const [alertDisplayed, setAlertDisplayed] = useState('');
+
   const {
     someError: errorAddPhoto,
     uploadFile,
@@ -73,6 +75,14 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
   useEffect(() => {
     if (successAddPhoto || successDeletePhoto) refetch();
   }, [successAddPhoto, successDeletePhoto]);
+
+  useEffect(() => {
+    if (successAddPhoto || errorAddPhoto) setAlertDisplayed('addPhoto');
+  }, [successAddPhoto, errorAddPhoto]);
+  useEffect(() => {
+    if (successDeletePhoto || errorDeletePhoto)
+      setAlertDisplayed('deletePhoto');
+  }, [successDeletePhoto, errorDeletePhoto]);
 
   const paginationClasses = paginationStyles();
   const iconClasses = iconStyles();
@@ -151,43 +161,83 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
           </Grid>
           <Grid item xs={4} style={{ textAlign: 'right' }}>
             {useTransition(
-              !!errorAddPhoto,
+              !!errorAddPhoto && alertDisplayed == 'addPhoto',
               'error',
               errorAddPhoto?.message || 'Error agregando foto',
               {
                 duration: 3000,
-                styles: { display: errorAddPhoto ? 'flex' : 'none' },
+                styles: {
+                  display:
+                    errorAddPhoto && alertDisplayed == 'addPhoto'
+                      ? 'flex'
+                      : 'none',
+                },
+                onClose: () => {
+                  setAlertDisplayed('');
+                },
+                showClose: false,
               }
             )}
             {useTransition(
-              successAddPhoto,
+              successAddPhoto && alertDisplayed == 'addPhoto',
               'success',
               'Foto agregada satisfactoriamente',
               {
                 duration: 3000,
-                styles: { display: successAddPhoto ? 'flex' : 'none' },
+                styles: {
+                  display:
+                    successAddPhoto && alertDisplayed == 'addPhoto'
+                      ? 'flex'
+                      : 'none',
+                },
+                onClose: () => {
+                  setAlertDisplayed('');
+                },
+                showClose: false,
               }
             )}
             {useTransition(
-              !!errorDeletePhoto,
+              !!errorDeletePhoto && alertDisplayed == 'deletePhoto',
               'error',
               errorDeletePhoto?.message || 'Error eliminando foto',
               {
                 duration: 3000,
-                styles: { display: errorDeletePhoto ? 'flex' : 'none' },
+                styles: {
+                  display:
+                    errorDeletePhoto && alertDisplayed == 'deletePhoto'
+                      ? 'flex'
+                      : 'none',
+                },
+                onClose: () => {
+                  setAlertDisplayed('');
+                },
+                showClose: false,
               }
             )}
             {useTransition(
-              successDeletePhoto,
+              successDeletePhoto && alertDisplayed == 'deletePhoto',
               'success',
               'Foto eliminada satisfactoriamente',
               {
                 duration: 3000,
-                styles: { display: successDeletePhoto ? 'flex' : 'none' },
+                styles: {
+                  display:
+                    successDeletePhoto && alertDisplayed == 'deletePhoto'
+                      ? 'flex'
+                      : 'none',
+                },
+                onClose: () => {
+                  setAlertDisplayed('');
+                },
+                showClose: false,
               }
             )}
           </Grid>
-          <Grid item xs={2} style={{ textAlign: 'right' }}>
+          <Grid
+            item
+            xs={2}
+            style={{ textAlign: 'right', paddingBottom: 20, paddingTop: 20 }}
+          >
             <input
               accept="image/*"
               type="file"
