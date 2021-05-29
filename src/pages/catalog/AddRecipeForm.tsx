@@ -1,30 +1,12 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  TextField,
-  Typography,
-} from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Grid, Paper, TextField } from '@material-ui/core';
 import { useMutation } from '@apollo/client';
 import * as SS from 'string-similarity';
-import CloseIcon from '@material-ui/icons/Close';
-import NewReleasesSharpIcon from '@material-ui/icons/NewReleasesSharp';
 import React, { useRef, useState } from 'react';
 
 import { AddRecipeVars, ADD_RECIPE } from '../../app.gql';
 import { IRecipe } from '../../types';
-import { viewRecipe } from '../../Routes';
 import { sendingButton } from '../../components/SendingButton';
+import SimilarNamesDialog from './SimilarNamesDialog';
 
 interface IRecipeForm {
   recipeName: { value: string };
@@ -39,13 +21,6 @@ interface AddRecipeFormProps {
   setSomeError: (error: Error) => void;
   someError?: Error;
   recipes: IRecipe[];
-}
-
-interface SimilarNamesDialogProps {
-  similarRecipes: IRecipe[];
-  open: boolean;
-  onClose: React.Dispatch<React.SetStateAction<boolean>>;
-  confirmButton: JSX.Element;
 }
 
 const getSimilarRecipeByName = (
@@ -64,65 +39,6 @@ const getSimilarRecipeByName = (
         ? [...results, recipes[curretIndex]]
         : results,
     []
-  );
-};
-
-const SimilarNamesDialog: React.FC<SimilarNamesDialogProps> = (props) => {
-  const { similarRecipes, open, onClose, confirmButton } = props;
-  return (
-    <Dialog
-      fullWidth
-      onClose={() => onClose(false)}
-      aria-labelledby="names-modal-title"
-      aria-describedby="names-modal-desc"
-      open={open}
-    >
-      <DialogTitle
-        disableTypography
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'baseline',
-        }}
-      >
-        <Typography variant="h6" id="names-modal-title">
-          Se encontraron recetas con nombres similares!
-        </Typography>
-        <IconButton aria-label="close" onClick={() => onClose(false)}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent dividers>
-        <Typography gutterBottom id="names-modal-desc">
-          Por favor confirmar para agregar la receta.
-        </Typography>
-        <List dense={true}>
-          {similarRecipes.map((r) => (
-            <ListItem
-              key={r.id}
-              button
-              component={Link}
-              to={`${viewRecipe(r.id)}`}
-            >
-              <ListItemIcon>
-                <NewReleasesSharpIcon />
-              </ListItemIcon>
-              <ListItemText primary={r.name} />
-            </ListItem>
-          ))}
-        </List>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => onClose(false)}
-        >
-          Cancelar
-        </Button>
-        {confirmButton}
-      </DialogActions>
-    </Dialog>
   );
 };
 
