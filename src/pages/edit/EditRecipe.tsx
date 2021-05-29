@@ -195,9 +195,7 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
               id={`add-photo`}
               onChange={({ target: { files } }) => {
                 if (files?.[0]) {
-                  uploadFile({
-                    variables: { file: files[0], recipeId: data.id },
-                  });
+                  uploadFile(files[0], data.id);
                 }
               }}
               disabled={sendingPhoto || !!errorAddPhoto}

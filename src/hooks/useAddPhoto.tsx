@@ -1,4 +1,4 @@
-import { MutationFunctionOptions, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { UploadPhotoVars, UPLOAD_PHOTO } from '../app.gql';
 
@@ -8,9 +8,7 @@ interface uploadPhotoData {
 
 interface addPhotoResult {
   someError?: Error;
-  uploadFile: (
-    options?: MutationFunctionOptions<uploadPhotoData, UploadPhotoVars>
-  ) => void;
+  uploadFile: (file: File, recipeId: string) => void;
   loading: boolean;
   success: boolean;
 }
@@ -22,7 +20,7 @@ const useAddPhoto = (): addPhotoResult => {
   const reportError = (error: Error) => {
     setSomeError(error);
   };
-  const [uploadFile, { loading }] = useMutation<
+  const [uploadFileMutation, { loading }] = useMutation<
     uploadPhotoData,
     UploadPhotoVars
   >(UPLOAD_PHOTO, {
@@ -35,6 +33,12 @@ const useAddPhoto = (): addPhotoResult => {
     },
     onError: reportError,
   });
+
+  const uploadFile = (file: File, recipeId: string) => {
+    setSuccess(false);
+    setSomeError(undefined);
+    uploadFileMutation({ variables: { file, recipeId } });
+  };
 
   return { someError, uploadFile, loading, success };
 };

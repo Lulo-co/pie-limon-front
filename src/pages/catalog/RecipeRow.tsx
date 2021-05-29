@@ -71,7 +71,7 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }) => {
           id={`add-photo-${id}`}
           onChange={({ target: { files } }) => {
             if (files?.[0]) {
-              uploadFile({ variables: { file: files[0], recipeId: id } });
+              uploadFile(files[0], id);
             }
           }}
           disabled={uploading || !!someError}
