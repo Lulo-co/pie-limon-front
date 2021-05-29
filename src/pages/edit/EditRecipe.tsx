@@ -83,7 +83,14 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
     if (successDeletePhoto || errorDeletePhoto)
       setAlertDisplayed('deletePhoto');
   }, [successDeletePhoto, errorDeletePhoto]);
-
+  useEffect(() => {
+    if (successAddPhoto) setcurrentPhotoIndex(data.photos.length);
+  }, [successAddPhoto]);
+  useEffect(() => {
+    if (currentPhotoIndex >= data.photos.length) {
+      setcurrentPhotoIndex(data.photos.length - 1);
+    }
+  }, [data.photos.length]);
   const paginationClasses = paginationStyles();
   const iconClasses = iconStyles();
 
@@ -265,6 +272,7 @@ const EditRecipe: React.FC<RecipeWrapperChildProps> = (props) => {
                 count={data.photos.length}
                 color="primary"
                 classes={paginationClasses}
+                page={currentPhotoIndex + 1}
                 onChange={(e, v) => {
                   setcurrentPhotoIndex(v - 1);
                 }}
