@@ -18,6 +18,7 @@ import { viewRecipe, editRecipe } from '../../Routes';
 import useTransition from '../../hooks/useTransition';
 import useAddPhoto from '../../hooks/useAddPhoto';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
+import useDeleteRecipe from '../../hooks/useDeleteRecipe';
 
 interface RecipeRowProps {
   recipe: IRecipe;
@@ -32,6 +33,12 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }) => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const { someError, uploadFile, loading: uploading, success } = useAddPhoto();
+  const {
+    error: errorDeleteRecipe,
+    deleteRecipe,
+    loading: sendingDeleteRecipe,
+    success: successDeleteRecipe,
+  } = useDeleteRecipe();
 
   useEffect(() => {
     if (success) {
@@ -50,21 +57,30 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }) => {
     alertDisplay = true;
     alertType = 'error';
     alertMessage = 'No se pudo subir la foto';
+  } else if (errorDeleteRecipe) {
+    alertDisplay = true;
+    alertType = 'error';
+    alertMessage = errorDeleteRecipe.message || 'Error eliminiando la receta';
   }
 
   const { name, id } = recipe;
+  const transition = useTransition(
+    alertDisplay,
+    alertType as Color,
+    alertMessage,
+    {
+      styles: { padding: '0 11px' },
+      duration: 4000,
+    }
+  );
+  if (successDeleteRecipe) return <></>;
 
   return (
     <TableRow>
       <TableCell>
         <Link to={`${viewRecipe(id)}`}>{name}</Link>
       </TableCell>
-      <TableCell align="right">
-        {useTransition(alertDisplay, alertType as Color, alertMessage, {
-          styles: { padding: '0 11px' },
-          duration: 4000,
-        })}
-      </TableCell>
+      <TableCell align="right">{transition}</TableCell>
       <TableCell align="right" size="small">
         {numPhotos}
       </TableCell>
@@ -112,15 +128,19 @@ const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }) => {
             setOpenDeleteDialog(true);
           }}
         >
-          <DeleteForeverIcon />
+          {sendingDeleteRecipe ? (
+            <CircularProgress size={20} />
+          ) : (
+            <DeleteForeverIcon />
+          )}
         </IconButton>
         <ConfirmationDialog
           open={openDeleteDialog}
-          description="¿Seguro de eliminar la receta?, se eliminara todos los datos y las fotos"
-          title="Confirmación eliminar receta"
+          description="Se eliminarán todos los datos y fotos"
+          title="¿Seguro que desea eliminar la receta?"
           setOpen={setOpenDeleteDialog}
           onConfirm={() => {
-            console.log('borrar');
+            deleteRecipe(id);
           }}
         />
       </TableCell>

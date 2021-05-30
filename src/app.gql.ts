@@ -80,3 +80,17 @@ export const DELETE_PHOTO = gql`
     deleteRecipePhoto(url: $url)
   }
 `;
+
+export interface DeleteRecipeVars {
+  id: string;
+}
+
+export interface DeleteRecipeData {
+  deleteRecipe: boolean;
+}
+
+export const DELETE_RECIPE = gql`
+  mutation deleteRecipe($id: ID!) {
+    deleteRecipe(id: $id)
+  }
+`;
