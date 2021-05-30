@@ -5,9 +5,7 @@ export const GET_RECIPES = gql`
     getRecipes {
       id
       name
-      photos {
-        id
-      }
+      num_photos
     }
   }
 `;
@@ -21,6 +19,7 @@ export const GET_RECIPE = gql`
     getRecipe(recipeId: $recipeId) {
       id
       name
+      description
       photos {
         url
       }
@@ -40,13 +39,44 @@ export const ADD_RECIPE = gql`
   }
 `;
 
+export interface EditRecipeVars {
+  id: string;
+  description: string;
+}
+
+export const EDIT_RECIPE = gql`
+  mutation editRecipe($id: ID!, $description: String) {
+    editRecipe(recipe: { id: $id, description: $description }) {
+      id
+    }
+  }
+`;
+
 export interface UploadPhotoVars {
   file: File;
-  recipeId: number;
+  recipeId: string;
+}
+
+export interface UploadPhotoData {
+  attachRecipePhoto: boolean;
 }
 
 export const UPLOAD_PHOTO = gql`
   mutation attachRecipePhoto($file: Upload!, $recipeId: ID!) {
     attachRecipePhoto(file: { file: $file }, recipeId: $recipeId)
+  }
+`;
+
+export interface DeletePhotoVars {
+  url: string;
+}
+
+export interface DeletePhotoData {
+  deleteRecipePhoto: boolean;
+}
+
+export const DELETE_PHOTO = gql`
+  mutation deleteRecipePhoto($url: String!) {
+    deleteRecipePhoto(url: $url)
   }
 `;

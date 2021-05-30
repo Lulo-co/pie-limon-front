@@ -3,8 +3,8 @@ import { useLazyQuery } from '@apollo/client';
 import Grid from '@material-ui/core/Grid';
 import React, { useState, useEffect } from 'react';
 
-import { GET_RECIPES } from './catalog.gql';
-import { IRecipe } from './types';
+import { GET_RECIPES } from '../../app.gql';
+import { IRecipe } from '../../types';
 import AddRecipeForm from './AddRecipeForm';
 import RecipeList from './RecipeList';
 
@@ -13,7 +13,7 @@ interface GetRecipesData {
 }
 
 function Catalog() {
-  const [someError, setSomeError] = useState(null as Error | null);
+  const [someError, setSomeError] = useState<Error>();
   const [
     getRecipesQuery,
     { loading: loadingRecipes, refetch: recipesRefetch, data },

@@ -15,7 +15,7 @@ const RecipePhoto: React.FC<RecipePhotoProps> = ({ url, visible }) => {
       {error && <span>Error cargando imagen</span>}
       {visible && (
         <img
-          style={{ maxWidth: '100%' }}
+          style={{ maxWidth: '100%', minHeight: 60 }}
           src={url}
           alt="Foto de receta"
           onLoad={() => {

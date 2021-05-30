@@ -7,12 +7,14 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import KitchenTwoToneIcon from '@material-ui/icons/KitchenTwoTone';
 import React, { useState } from 'react';
 
-import { PAGES } from './AppConstants';
-import Catalog from './Catalog';
+import * as Routes from './Routes';
+import Catalog from './pages/catalog/Catalog';
+import EditRecipe from './pages/edit/EditRecipe';
 import Oops from './Oops';
-import RecipeDetail from './RecipeDetail';
+import RecipeDetail from './pages/detail/RecipeDetail';
 
 import './App.css';
+import RecipeWrapper from './components/RecipeWrapper';
 
 function App() {
   const [token, setToken] = useState('');
@@ -38,7 +40,7 @@ function App() {
     link: authLink.concat(uploadLink),
   });
 
-  const loadRoute = (OkComponent: React.FC) => (): JSX.Element => {
+  const loadRoute = (OkComponent: JSX.Element) => (): JSX.Element => {
     if (!token || !isAllowed) {
       return (
         <Oops
@@ -48,8 +50,8 @@ function App() {
         />
       );
     }
-    return <OkComponent />;
-  }; 
+    return OkComponent;
+  };
 
   return (
     <div className="App">
@@ -57,7 +59,7 @@ function App() {
       <Router>
         <AppBar position="relative">
           <Toolbar>
-            <Link to={PAGES.ROOT} style={{ display: 'inline-flex' }}>
+            <Link to={Routes.root} style={{ display: 'inline-flex' }}>
               <KitchenTwoToneIcon />
               <Typography variant="h6" color="inherit" noWrap>
                 Recetas
@@ -69,10 +71,14 @@ function App() {
           <Container>
             <Switch>
               <Route
-                path={`${PAGES.RECIPE_DETAIL}:id`}
-                render={loadRoute(RecipeDetail)}
+                path={`${Routes.editRecipe()}`}
+                render={loadRoute(<RecipeWrapper Component={EditRecipe} />)}
               />
-              <Route path={PAGES.ROOT} render={loadRoute(Catalog)} />
+              <Route
+                path={`${Routes.viewRecipe()}`}
+                render={loadRoute(<RecipeWrapper Component={RecipeDetail} />)}
+              />
+              <Route path={Routes.root()} render={loadRoute(<Catalog />)} />
             </Switch>
           </Container>
         </ApolloProvider>

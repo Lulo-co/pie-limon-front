@@ -1,5 +1,11 @@
 export interface IRecipe {
-  id: number;
+  id: string;
   name: string;
-  photos: Array<{ url: string }>;
+  description?: string;
+  num_photos: string;
+  photos: Array<IRecipePhoto>;
+}
+
+export interface IRecipePhoto {
+  url: string;
 }
